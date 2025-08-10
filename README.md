@@ -4,23 +4,33 @@ A React Native component to generate rich link previews by fetching metadata (ti
 
 ## Installation
 
-
 ```sh
 npm install react-native-preview-url
 ```
 
-
 ## Usage
 
+### Props
 
-```js
-import { multiply } from 'react-native-preview-url';
+- url (required)
+- timeout (optional)
+- onSuccess(metadata => console.log(metdata))
+- onError(e => console.log(e))
+- titleLines: number
+- descriptionLines: number
+- onPress: () => void
+- containerStyle: ViewStyle
+- imageContainerStyle: ViewStyle
+- titleStyle: TextStyle
+- descriptionStyle: TextStyle
+- showUrl: boolean
+- hideImage?: boolean = false
+- loaderComponent: React.ReactNode
+- fallbackImage: ImageSource
 
-// ...
-
-const result = await multiply(3, 7);
-```
-
+- baseUrl(later)
+- imageComponent
+- placeholderImage
 
 ## Contributing
 
