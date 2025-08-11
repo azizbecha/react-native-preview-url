@@ -99,7 +99,7 @@ export const LinkPreview: React.FC<Props> = ({
           onError={() => setImageError(true)}
         />
       )}
-      <View>
+      <View style={styles.contentContainer}>
         <Text numberOfLines={titleLines} style={[styles.title, titleStyle]}>
           {data.title}
         </Text>
@@ -122,6 +122,8 @@ export const LinkPreview: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
+    alignSelf: 'flex-start',
+    flexShrink: 1,
     padding: 12,
     borderRadius: 10,
     borderWidth: StyleSheet.hairlineWidth,
@@ -134,12 +136,14 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-
     elevation: 5,
+  },
+  contentContainer: {
+    flexShrink: 1,
   },
   image: {
     width: '100%',
-    height: '50%',
+    aspectRatio: 16 / 9,
     overflow: 'hidden',
     borderRadius: 10,
   },

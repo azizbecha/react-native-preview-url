@@ -1,0 +1,8 @@
+/node_modules
+/example
+/android
+/ios
+*.log
+*.lock
+/.github
+/.yarn
