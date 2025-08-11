@@ -74,7 +74,6 @@ export const LinkPreview: React.FC<Props> = ({
   }, [error, onError]);
 
   if (loading) {
-    // TODO: Make custom skeleton loader instead of ActivityIndicator
     return loaderComponent || <LoaderComponent />;
   }
 

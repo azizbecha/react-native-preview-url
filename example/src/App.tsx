@@ -1,5 +1,4 @@
 import { LinkPreview } from 'react-native-preview-url';
-
 export default function App() {
   return (
     <LinkPreview
