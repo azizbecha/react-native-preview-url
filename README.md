@@ -1,9 +1,10 @@
 # React Native Preview Url
-
 A React Native library that provides an easy way to fetch and display link previews using the `useUrlPreview` hook and a customizable `<LinkPreview />` component.
 It uses our own open-source free open source API `azizbecha-link-preview-api` available on GitHub at [https://github.com/azizbecha/link-preview-api](https://github.com/azizbecha/link-preview-api).
 
-You can use the API for free without an API key or host it yourself if you prefer.
+<p>You can use the API for free without an API key or host it yourself if you prefer.</p>
+<img src="https://github.com/user-attachments/assets/ca1b0f21-0c47-4894-ae84-6c48fd5401cd" width="300" style="flex: 1" />
+
 
 ## Features
 
@@ -83,14 +84,16 @@ export const Example = () => (
 ```json
 {
   "status": 200,
-  "title": "GitHub · Build and ship software on a single, collaborative platform",
-  "description": "Join the world's most widely adopted, AI-powered developer platform where millions of developers, businesses, and the largest open source community build software that advances humanity.",
-  "url": "https://github.com/",
+  "title": "azizbecha - Overview",
+  "description": "I'm fixing bugs now, I'll write a bio later. azizbecha has 26 repositories available. Follow their code on GitHub.",
+  "url": "https://github.com/azizbecha",
   "images": [
-    "https://images.ctfassets.net/8aevphvgewt8/4UxhHBs2XnuyZ4lYQ83juV/b61529b087aeb4a318bda311edf4c345/home24.jpg"
+    "https://avatars.githubusercontent.com/u/63454940?v=4?s=400"
   ],
-  "favicons": ["https://github.githubassets.com/favicons/favicon.svg"],
-  "mediaType": "object",
+  "favicons": [
+    "https://github.githubassets.com/favicons/favicon.svg"
+  ],
+  "mediaType": "profile",
   "contentType": "text/html",
   "siteName": "GitHub"
 }
