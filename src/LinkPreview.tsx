@@ -24,7 +24,7 @@ interface Props {
   timeout?: number;
   onError?: (error: string) => void;
   onSuccess?: (data: LinkPreviewResponse) => void;
-  onPress?: () => void;
+  onPress?: (data: LinkPreviewResponse) => void;
   titleLines?: number;
   descriptionLines?: number;
   containerStyle?: ViewStyle;
@@ -82,7 +82,7 @@ export const LinkPreview: React.FC<Props> = ({
   return (
     <TouchableOpacity
       style={[styles.container, containerStyle]}
-      onPress={() => onPress?.() || Linking.openURL(data.url)}
+      onPress={() => onPress?.(data) ?? Linking.openURL(data.url)}
       accessibilityRole="link"
       accessibilityLabel={`Link preview: ${data.title}`}
     >
