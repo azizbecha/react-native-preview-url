@@ -86,7 +86,8 @@ export const LinkPreview: React.FC<Props> = ({
       style={[styles.container, containerStyle]}
       onPress={() => onPress?.(data) ?? Linking.openURL(data.url)}
       accessibilityRole="link"
-      accessibilityLabel={`Link preview: ${data.title}`}
+      accessibilityLabel={`${data.title}, ${data.description}`}
+      accessibilityHint={`Opens ${getDomainFromUrl(data.url)}`}
     >
       {data.images && !hideImage && (
         <Image
@@ -94,6 +95,7 @@ export const LinkPreview: React.FC<Props> = ({
           style={[styles.image, imageStyle]}
           resizeMode="cover"
           onError={() => setImageError(true)}
+          accessibilityLabel={`Preview image for ${data.title}`}
         />
       )}
       <View style={styles.contentContainer}>
