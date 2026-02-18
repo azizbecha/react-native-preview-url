@@ -61,6 +61,8 @@ export const LinkPreview: React.FC<Props> = ({
   const { loading, data, error } = useUrlPreview(url, timeout);
   const [imageError, setImageError] = useState<boolean>(false);
 
+  const imageUri = !imageError && data?.images?.[0];
+
   useEffect(() => {
     if (data) {
       onSuccess?.(data);
@@ -88,11 +90,7 @@ export const LinkPreview: React.FC<Props> = ({
     >
       {data.images && !hideImage && (
         <Image
-          source={
-            imageError || !data.images[0]
-              ? fallbackImage
-              : { uri: data.images[0] }
-          }
+          source={imageUri ? { uri: imageUri } : fallbackImage}
           style={[styles.image, imageStyle]}
           resizeMode="cover"
           onError={() => setImageError(true)}
