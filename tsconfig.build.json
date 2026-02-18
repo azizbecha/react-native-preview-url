@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig",
-  "exclude": ["example", "lib"]
+  "exclude": ["__mocks__", "example", "lib", "tests", "vitest.config.ts", "vitest.setup.ts"]
 }
