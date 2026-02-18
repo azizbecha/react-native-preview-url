@@ -54,8 +54,8 @@ export const useUrlPreview = (
 
         const json = await res.json();
         setData(json);
-      } catch (err: any) {
-        if (err.name !== 'AbortError') {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name !== 'AbortError') {
           console.error(err);
           setError(err.message || 'Unknown error');
           setData(null);
