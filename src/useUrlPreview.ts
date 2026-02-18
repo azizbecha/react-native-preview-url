@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  BASE_URL,
+  getBaseUrl,
   DEFAULT_TIMEOUT,
   MAX_TIMEOUT,
   MIN_TIMEOUT,
@@ -39,7 +39,7 @@ export const useUrlPreview = (
 
       try {
         const res = await fetch(
-          `${BASE_URL}/get?url=${encodeURIComponent(url)}&timeout=${finalTimeout}`,
+          `${getBaseUrl()}/get?url=${encodeURIComponent(url)}&timeout=${finalTimeout}`,
           { signal: controller.signal }
         );
 
