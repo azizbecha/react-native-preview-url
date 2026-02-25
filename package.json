@@ -1,6 +1,6 @@
 {
   "name": "react-native-preview-url",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "A React Native component to generate rich link previews by fetching metadata (title, description, images) from URLs. Easily integrate customizable and lightweight link previews into your app.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
