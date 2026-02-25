@@ -61,7 +61,7 @@ export const LinkPreview: React.FC<Props> = ({
   const { loading, data, error } = useUrlPreview(url, timeout);
   const [imageError, setImageError] = useState<boolean>(false);
 
-  const imageUri = !imageError && data?.images?.[0];
+  const imageUri = !imageError && data?.images?.[0]?.url;
 
   useEffect(() => {
     if (data) {
@@ -92,7 +92,13 @@ export const LinkPreview: React.FC<Props> = ({
       {data.images && !hideImage && (
         <Image
           source={imageUri ? { uri: imageUri } : fallbackImage}
-          style={[styles.image, imageStyle]}
+          style={[
+            styles.image,
+            data.images[0]?.width && data.images[0]?.height
+              ? { aspectRatio: data.images[0].width / data.images[0].height }
+              : undefined,
+            imageStyle,
+          ]}
           resizeMode="cover"
           onError={() => setImageError(true)}
           accessibilityLabel={`Preview image for ${data.title}`}
