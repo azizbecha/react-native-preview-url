@@ -8,6 +8,13 @@ import {
 import { clamp } from './utils/clamp';
 import type { LinkPreviewResponse } from './types';
 import { isValidHttpUrl } from './utils/isValidHttpUrl';
+import {
+  getCached,
+  setCached,
+  getInFlight,
+  setInFlight,
+  clearInFlight,
+} from './cache';
 
 export const useUrlPreview = (
   url: string,
@@ -30,45 +37,72 @@ export const useUrlPreview = (
       return;
     }
 
-    const controller = new AbortController();
+    const cached = getCached(url);
+    if (cached) {
+      setError(null);
+      setData(cached);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
     const finalTimeout = clamp(timeout, MIN_TIMEOUT, MAX_TIMEOUT);
 
-    const fetchPreview = async () => {
+    const runFetch = async (): Promise<LinkPreviewResponse> => {
+      const res = await fetch(
+        `${getBaseUrl()}/get?url=${encodeURIComponent(url)}&timeout=${finalTimeout}`
+      );
+
+      if (!res.ok) {
+        let errMsg = `Error ${res.status}`;
+        try {
+          const errJson = await res.json();
+          errMsg = errJson.error || errMsg;
+        } catch (_) {}
+        throw new Error(errMsg);
+      }
+
+      return (await res.json()) as LinkPreviewResponse;
+    };
+
+    const load = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const res = await fetch(
-          `${getBaseUrl()}/get?url=${encodeURIComponent(url)}&timeout=${finalTimeout}`,
-          { signal: controller.signal }
-        );
-
-        if (!res.ok) {
-          let errMsg = `Error ${res.status}`;
-          try {
-            const errJson = await res.json();
-            errMsg = errJson.error || errMsg;
-          } catch (_) {}
-          throw new Error(errMsg);
+        let promise = getInFlight(url);
+        if (!promise) {
+          promise = runFetch();
+          setInFlight(url, promise);
+          promise
+            .then((value) => {
+              setCached(url, value);
+            })
+            .catch(() => {})
+            .finally(() => {
+              clearInFlight(url);
+            });
         }
 
-        const json = await res.json();
+        const json = await promise;
+        if (cancelled) return;
         setData(json);
       } catch (err: unknown) {
-        if (err instanceof Error && err.name !== 'AbortError') {
+        if (cancelled) return;
+        if (err instanceof Error) {
           console.error(err);
           setError(err.message || 'Unknown error');
           setData(null);
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
-    fetchPreview();
+    load();
 
     return () => {
-      controller.abort();
+      cancelled = true;
     };
   }, [url, timeout]);
 

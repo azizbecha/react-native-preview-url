@@ -57,6 +57,37 @@ export const Example = () => (
 );
 ```
 
+## Caching
+
+Successful responses are cached in memory and shared across every `<LinkPreview />` and `useUrlPreview` call, so rendering the same URL twice (or ten times, or on a later screen) fires only a single network request. Concurrent requests for the same URL are deduplicated automatically.
+
+Defaults: up to 50 entries, 5-minute TTL, enabled.
+
+```tsx
+import {
+  configureCache,
+  clearCache,
+  invalidateUrl,
+} from 'react-native-preview-url';
+
+// Tune at app startup
+configureCache({ maxSize: 100, ttl: 10 * 60 * 1000 });
+
+// Drop everything (e.g. on pull-to-refresh)
+clearCache();
+
+// Drop a single URL
+invalidateUrl('https://github.com');
+
+// Disable entirely
+configureCache({ enabled: false });
+```
+
+Notes:
+- Only successful responses are cached; errors are not.
+- If you call `setBaseUrl` mid-session, call `clearCache()` afterwards — cache keys are URL-only.
+- `configureCache(...)` resets the cache when called.
+
 ## Props
 
 | Prop               | Type                                  | Required | Default             | Description                                          |
