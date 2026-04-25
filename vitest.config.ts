@@ -24,6 +24,8 @@ export default defineConfig({
         '**/*.config.ts',
         '**/*.d.ts',
         '**/dist/**',
+        '.yarn/',
+        'coverage/',
         'example/',
         'lib/',
         'node_modules/',

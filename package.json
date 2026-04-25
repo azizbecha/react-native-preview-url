@@ -73,6 +73,7 @@
     "@types/jest": "^29.5.5",
     "@types/react": "^19.0.12",
     "@vitejs/plugin-react": "^4.2.0",
+    "@vitest/coverage-v8": "^1.0.0",
     "@vitest/ui": "^1.0.0",
     "commitlint": "^19.6.1",
     "del-cli": "^5.1.0",
