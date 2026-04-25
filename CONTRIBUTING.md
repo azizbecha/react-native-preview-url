@@ -103,23 +103,24 @@ Our pre-commit hooks verify that the linter and tests pass when committing.
 
 ### Publishing to npm
 
-Releases are published from CI via the `Release` workflow
-(`.github/workflows/release.yml`), using npm's [Trusted Publishers](https://docs.npmjs.com/trusted-publishers)
-(OIDC) so no long-lived `NPM_TOKEN` is stored. Locally, `release-it` only
-handles the version bump, changelog, commit, tag, and tag push; the workflow
-runs lint, format check, typecheck, tests, build, and then `npm publish
---provenance --access public`.
+Releases are fully automated. To cut a new version:
 
-To cut a new release from `main`:
+1. Bump the `version` field in `package.json` (e.g. `0.4.0` → `0.4.1`).
+2. Commit and push to `main`.
 
-```sh
-yarn release
-```
+That's it. The `Release` workflow (`.github/workflows/release.yml`) detects the
+new version, runs lint / format check / typecheck / tests / build, then
+publishes to npm with `--provenance --access public` using
+[Trusted Publishers](https://docs.npmjs.com/trusted-publishers) (OIDC — no
+long-lived `NPM_TOKEN` stored), tags the commit `v<version>`, and creates a
+GitHub release with auto-generated notes.
 
-This bumps the version per conventional commits, writes the changelog, commits
-`chore: release <version>`, tags `v<version>`, and pushes both. The tag push
-triggers the release workflow, which publishes to npm and creates a GitHub
-release.
+If the tag `v<version>` already exists, the workflow is a no-op — safe to
+re-run, and you can edit `package.json` for unrelated reasons without
+triggering a release.
+
+You can also bump the version with `npm version --no-git-tag-version
+<patch|minor|major>` to avoid creating a stray local tag.
 
 ### Scripts
 
