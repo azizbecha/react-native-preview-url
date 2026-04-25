@@ -11,7 +11,9 @@ describe('getDomainFromUrl', () => {
   });
 
   it('should extract domain from URL with path', () => {
-    expect(getDomainFromUrl('https://example.com/path/to/page')).toBe('example.com');
+    expect(getDomainFromUrl('https://example.com/path/to/page')).toBe(
+      'example.com'
+    );
   });
 
   it('should extract domain from URL with port', () => {

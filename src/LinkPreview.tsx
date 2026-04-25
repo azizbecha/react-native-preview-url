@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Image,
   Linking,
@@ -60,8 +60,15 @@ export const LinkPreview: React.FC<Props> = ({
 }) => {
   const { loading, data, error } = useUrlPreview(url, timeout);
   const [imageError, setImageError] = useState<boolean>(false);
+  const activeImageUriRef = useRef<string | undefined>(undefined);
 
-  const imageUri = !imageError && data?.images?.[0]?.url;
+  const candidateImageUri = data?.images?.[0]?.url;
+  const imageUri = !imageError ? candidateImageUri : undefined;
+  activeImageUriRef.current = candidateImageUri;
+
+  useEffect(() => {
+    setImageError(false);
+  }, [url]);
 
   useEffect(() => {
     if (data) {
@@ -76,15 +83,23 @@ export const LinkPreview: React.FC<Props> = ({
   }, [error, onError]);
 
   if (loading) {
-    return loaderComponent || <LoaderComponent />;
+    return <>{loaderComponent || <LoaderComponent />}</>;
   }
 
   if (error || !data || !visible) return null;
 
+  const handleImageError = (failedUri: string | undefined) => {
+    if (failedUri && failedUri !== activeImageUriRef.current) return;
+    setImageError(true);
+  };
+
   return (
     <TouchableOpacity
       style={[styles.container, containerStyle]}
-      onPress={() => onPress?.(data) ?? Linking.openURL(data.url)}
+      onPress={() => {
+        if (onPress) onPress(data);
+        else Linking.openURL(data.url);
+      }}
       accessibilityRole="link"
       accessibilityLabel={`${data.title}, ${data.description}`}
       accessibilityHint={`Opens ${getDomainFromUrl(data.url)}`}
@@ -100,7 +115,7 @@ export const LinkPreview: React.FC<Props> = ({
             imageStyle,
           ]}
           resizeMode="cover"
-          onError={() => setImageError(true)}
+          onError={() => handleImageError(candidateImageUri)}
           accessibilityLabel={`Preview image for ${data.title}`}
         />
       )}
