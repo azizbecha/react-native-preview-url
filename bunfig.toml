@@ -1,8 +1,0 @@
-# Bun test configuration
-
-[test]
-# Preload mock setup before running tests
-preload = ["./bun.test.ts"]
-root = "tests"
-
-

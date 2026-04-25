@@ -3,12 +3,12 @@ pre-commit:
   commands:
     lint:
       glob: "*.{js,ts,jsx,tsx}"
-      run: bunx eslint {staged_files}
+      run: yarn eslint {staged_files}
     types:
-      glob: "*.{js,ts, jsx, tsx}"
-      run: bunx tsc
+      glob: "*.{js,ts,jsx,tsx}"
+      run: yarn tsc
 commit-msg:
   parallel: true
   commands:
     commitlint:
-      run: bunx commitlint --edit
+      run: yarn commitlint --edit
