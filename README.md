@@ -59,9 +59,9 @@ export const Example = () => (
 
 ## Caching
 
-Successful responses are cached in memory and shared across every `<LinkPreview />` and `useUrlPreview` call, so rendering the same URL twice (or ten times, or on a later screen) fires only a single network request. Concurrent requests for the same URL are deduplicated automatically.
+Responses are cached in memory and shared across every `<LinkPreview />` and `useUrlPreview` call, so rendering the same URL twice (or ten times, or on a later screen) fires only a single network request. Concurrent requests for the same URL are deduplicated automatically. Errors are cached too (under a separate, shorter TTL) to avoid hammering a failing endpoint.
 
-Defaults: up to 50 entries, 5-minute TTL, enabled.
+Defaults: up to 50 entries, 5-minute success TTL, 30-second error TTL, enabled.
 
 ```tsx
 import {
@@ -71,12 +71,16 @@ import {
 } from 'react-native-preview-url';
 
 // Tune at app startup
-configureCache({ maxSize: 100, ttl: 10 * 60 * 1000 });
+configureCache({
+  maxSize: 100,
+  ttl: 10 * 60 * 1000,        // success TTL
+  errorTtl: 60 * 1000,         // error TTL
+});
 
 // Drop everything (e.g. on pull-to-refresh)
 clearCache();
 
-// Drop a single URL
+// Drop a single URL (success or error)
 invalidateUrl('https://github.com');
 
 // Disable entirely
@@ -84,8 +88,8 @@ configureCache({ enabled: false });
 ```
 
 Notes:
-- Only successful responses are cached; errors are not.
-- If you call `setBaseUrl` mid-session, call `clearCache()` afterwards — cache keys are URL-only.
+- Cache keys are scoped by base URL, so calling `setBaseUrl(...)` mid-session does not poison entries from a different environment.
+- Timeout errors are not cached (they're treated as transient).
 - `configureCache(...)` resets the cache when called.
 
 ## Props
@@ -96,7 +100,7 @@ Notes:
 | `timeout`          | `number`                              | No       | `3000`              | Fetch timeout in milliseconds                        |
 | `onSuccess`        | `(data: LinkPreviewResponse) => void` | No       | -                   | Callback when data is successfully fetched           |
 | `onError`          | `(error: string) => void`             | No       | -                   | Callback when fetching metadata fails                |
-| `onPress`          | `(url: string) => void`               | No       | -                   | Callback when the preview component is pressed       |
+| `onPress`          | `(data: LinkPreviewResponse) => void` | No       | -                   | Callback when pressed; if omitted, the URL is opened via `Linking` |
 | `containerStyle`   | `ViewStyle`                           | No       | -                   | Style for the container view                         |
 | `imageStyle`       | `ImageStyle`                          | No       | -                   | Style for the preview image                          |
 | `titleStyle`       | `TextStyle`                           | No       | -                   | Style for the title text                             |

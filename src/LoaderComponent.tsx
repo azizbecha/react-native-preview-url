@@ -47,7 +47,13 @@ export const LoaderComponent: React.FC<LinkPreviewSkeletonProps> = ({
   });
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View
+      style={[styles.container, containerStyle]}
+      accessible
+      accessibilityRole="progressbar"
+      accessibilityState={{ busy: true }}
+      accessibilityLabel="Loading link preview"
+    >
       {showImage && (
         <SkeletonElement
           style={styles.imageSkeleton}
