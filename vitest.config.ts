@@ -33,7 +33,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      'react-native': new URL('./__mocks__/react-native.ts', import.meta.url).pathname,
+      'react-native': new URL('./__mocks__/react-native.ts', import.meta.url)
+        .pathname,
     },
   },
 });
