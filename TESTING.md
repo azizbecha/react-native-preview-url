@@ -38,7 +38,9 @@ Updated `package.json` scripts:
 ### 3. Configuration Files
 
 #### `vitest.config.ts`
+
 Main Vitest configuration file with:
+
 - React plugin for JSX support
 - JSDOM environment for DOM simulation
 - Setup file for test initialization
@@ -47,7 +49,9 @@ Main Vitest configuration file with:
 - Test file patterns (`tests/**/*.test.{ts,tsx}`)
 
 #### `vitest.setup.ts`
+
 Test environment setup file that:
+
 - Configures cleanup after each test
 - Mocks React Native components (Image, Text, TouchableOpacity, View, etc.)
 - Mocks React Native APIs (Linking, StyleSheet)
@@ -59,20 +63,26 @@ Test environment setup file that:
 ### 1. Utility Function Tests
 
 #### `tests/utils/getDomainFromUrl.test.ts` (108 tests coverage)
+
 Tests for URL domain extraction:
+
 - **Happy Path** (11 tests): Basic HTTP/HTTPS URLs, www URLs, subdomains, ports, paths, fragments, special characters
 - **Error Handling** (6 tests): Invalid URLs, empty strings, malformed URLs, special characters
 - **Edge Cases** (6 tests): Complex subdomains, internationalized domains, long domain names, case sensitivity
 
 #### `tests/utils/isValidHttpUrl.test.ts` (47 tests coverage)
+
 Tests for URL validation:
+
 - **Happy Path** (12 tests): Valid HTTP/HTTPS URLs with various configurations
 - **Invalid Protocols** (7 tests): FTP, WebSocket, file, custom protocols, mailto, data URIs
 - **Malformed URLs** (8 tests): Empty strings, special characters, incomplete URLs
 - **Edge Cases** (9 tests): Uppercase protocols, multiple subdomains, very long URLs, encoded characters
 
 #### `tests/utils/clamp.test.ts` (35 tests coverage)
+
 Tests for value clamping utility:
+
 - **Happy Path** (10 tests): Within range, below min, above max, boundary values
 - **Timeout Constants** (6 tests): Integration with MIN_TIMEOUT, MAX_TIMEOUT, DEFAULT_TIMEOUT
 - **Edge Cases** (8 tests): Very large numbers, Infinity, floating-point precision
@@ -81,7 +91,9 @@ Tests for value clamping utility:
 ### 2. Hook Tests
 
 #### `tests/useUrlPreview.test.ts` (38 tests coverage)
+
 Comprehensive tests for the useUrlPreview hook:
+
 - **Happy Path** (7 tests): Successful fetching, loading states, timeout handling, URL encoding
 - **Error Handling** (7 tests): Empty URL, invalid URL, network errors, API errors, AbortError
 - **Timeout Handling** (2 tests): Clamping below/above bounds
@@ -90,6 +102,7 @@ Comprehensive tests for the useUrlPreview hook:
 - **Loading State Lifecycle** (1 test): State transitions
 
 Key test scenarios:
+
 - Validates URL before fetching
 - Clamps timeout within MIN_TIMEOUT and MAX_TIMEOUT
 - Handles AbortError gracefully (doesn't set error state)
@@ -100,7 +113,9 @@ Key test scenarios:
 ### 3. Component Tests
 
 #### `tests/LinkPreview.test.tsx` (45 tests coverage)
+
 Tests for the LinkPreview component:
+
 - **Happy Path** (11 tests): Loading states, custom loaders, preview rendering, URL display, callbacks
 - **Error Handling** (6 tests): Error states, error callbacks, missing data, image errors
 - **Text Truncation** (4 tests): Title and description line limits
@@ -111,6 +126,7 @@ Tests for the LinkPreview component:
 - **Prop Combinations** (2 tests): Various prop combinations
 
 Key test scenarios:
+
 - Renders loading state or custom loader
 - Displays preview data with title, description, and URL
 - Respects visibility prop (visible/hidden)
@@ -122,13 +138,16 @@ Key test scenarios:
 ### 4. Configuration Tests
 
 #### `tests/constants.test.ts` (24 tests coverage)
+
 Tests for constants and configuration management:
+
 - **Timeout Constants** (7 tests): Validation of MIN_TIMEOUT, MAX_TIMEOUT, DEFAULT_TIMEOUT
 - **Base URL Configuration** (4 tests): Default URL, URL validation, domain verification
 - **setBaseUrl Functionality** (7 tests): Setting custom URLs, persistence, multiple changes
 - **Consistency Checks** (3 tests): Value consistency, type validation
 
 Key test scenarios:
+
 - MIN_TIMEOUT = 1000ms, MAX_TIMEOUT = 30000ms, DEFAULT_TIMEOUT = 3000ms
 - Base URL is a valid HTTPS URL pointing to Vercel API
 - setBaseUrl persists across multiple calls
@@ -137,7 +156,9 @@ Key test scenarios:
 ### 5. Integration Tests
 
 #### `tests/integration.test.ts` (21 tests coverage)
+
 End-to-end workflow tests:
+
 - **URL Validation & Domain Extraction Workflow** (4 tests)
 - **Timeout Configuration Workflow** (3 tests)
 - **Configuration Management** (2 tests)
@@ -146,6 +167,7 @@ End-to-end workflow tests:
 - **Performance and Edge Cases** (2 tests)
 
 Tests verify:
+
 - Complete fetch workflow from URL validation to data retrieval
 - Proper error handling across multiple layers
 - Timeout constraints are applied correctly
@@ -177,31 +199,37 @@ Coverage Areas:
 ## Running Tests
 
 ### Install Dependencies
+
 ```bash
 yarn install
 ```
 
 ### Run All Tests
+
 ```bash
 yarn test
 ```
 
 ### Run Tests in Watch Mode
+
 ```bash
 yarn test --watch
 ```
 
 ### Run Specific Test File
+
 ```bash
 yarn test tests/utils/getDomainFromUrl.test.ts
 ```
 
 ### Run Tests Matching Pattern
+
 ```bash
 yarn test --grep "error handling"
 ```
 
 ### Generate Coverage Report
+
 ```bash
 yarn test:coverage
 ```
@@ -209,6 +237,7 @@ yarn test:coverage
 Output: `coverage/` directory with HTML report
 
 ### View Test UI
+
 ```bash
 yarn test:ui
 ```
@@ -218,6 +247,7 @@ Opens browser-based interactive test UI
 ## Test Coverage Goals
 
 Target coverage percentages:
+
 - **Statements**: > 85%
 - **Branches**: > 80%
 - **Functions**: > 85%
@@ -226,24 +256,28 @@ Target coverage percentages:
 ## Key Testing Patterns
 
 ### 1. Utility Function Testing
+
 - Test all input variations (valid, invalid, edge cases)
 - Verify return types and values
 - Test error conditions
 - Validate boundary conditions
 
 ### 2. Hook Testing
+
 - Mock external dependencies (fetch, constants)
 - Test state updates with waitFor
 - Verify cleanup with AbortController
 - Test dependency array changes
 
 ### 3. Component Testing
+
 - Mock child components and hooks
 - Verify callback invocations
 - Test prop combinations
 - Validate render output
 
 ### 4. Integration Testing
+
 - Test workflows across multiple modules
 - Verify data flow between components
 - Test error propagation
@@ -252,14 +286,14 @@ Target coverage percentages:
 ## Mocking Strategy
 
 ### React Native Mocks
+
 ```typescript
 // Automatically mocked in vitest.setup.ts
-- Image, Text, TouchableOpacity, View
-- Linking.openURL
-- StyleSheet.create
+(-Image, Text, TouchableOpacity, View - Linking.openURL - StyleSheet.create);
 ```
 
 ### API Mocks
+
 ```typescript
 // Mocked globally
 - global.fetch (for all network tests)
@@ -267,6 +301,7 @@ Target coverage percentages:
 ```
 
 ### Component Mocks
+
 ```typescript
 // Mocked as needed
 - LoaderComponent (in LinkPreview tests)
@@ -276,16 +311,19 @@ Target coverage percentages:
 ## Debugging Tests
 
 ### Enable Verbose Output
+
 ```bash
 yarn test --reporter=verbose
 ```
 
 ### Run Single Test
+
 ```bash
 yarn test --reporter=verbose tests/utils/getDomainFromUrl.test.ts
 ```
 
 ### Debug with Node Inspector
+
 ```bash
 node --inspect-brk ./node_modules/.bin/vitest
 ```
@@ -293,6 +331,7 @@ node --inspect-brk ./node_modules/.bin/vitest
 Then open `chrome://inspect` in Chrome
 
 ### Print Debug Information
+
 ```typescript
 import { describe, it, expect, vi } from 'vitest';
 
@@ -358,6 +397,7 @@ These tests are ready to be integrated into CI/CD pipelines:
 ## Support
 
 For issues or questions about the test setup:
+
 1. Check `tests/README.md` for detailed test documentation
 2. Review individual test files for implementation examples
 3. Check `vitest.config.ts` for configuration options

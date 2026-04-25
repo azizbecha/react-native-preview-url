@@ -5,6 +5,7 @@
 This directory contains comprehensive unit tests for the react-native-preview-url library using Vitest.
 
 **Test Statistics:**
+
 - ✅ **42 tests total**
 - ✅ **6 test files**
 - ✅ **100% passing**
@@ -14,7 +15,9 @@ This directory contains comprehensive unit tests for the react-native-preview-ur
 ### Utility Function Tests
 
 #### `utils/getDomainFromUrl.test.ts` (8 tests)
+
 Tests the domain extraction utility:
+
 - Basic URL parsing
 - URLs with www prefix
 - URLs with paths and ports
@@ -22,14 +25,18 @@ Tests the domain extraction utility:
 - Invalid URL handling
 
 #### `utils/isValidHttpUrl.test.ts` (11 tests)
+
 Tests HTTP/HTTPS URL validation:
+
 - Valid http/https URLs
 - Invalid protocols (FTP, WebSocket, etc.)
 - Malformed URLs
 - Edge cases with special characters
 
 #### `utils/clamp.test.ts` (10 tests)
+
 Tests the number clamping utility:
+
 - Values within range
 - Values below minimum
 - Values above maximum
@@ -38,7 +45,9 @@ Tests the number clamping utility:
 ### Configuration Tests
 
 #### `constants.test.ts` (8 tests)
+
 Tests timeout constants and base URL configuration:
+
 - Timeout constant validation (MIN=1000ms, MAX=30000ms, DEFAULT=3000ms)
 - Base URL management
 - Custom URL configuration
@@ -47,12 +56,16 @@ Tests timeout constants and base URL configuration:
 ### Component & Hook Tests
 
 #### `useUrlPreview.test.ts` (2 tests)
+
 Tests the main preview hook:
+
 - Hook definition and type
 - Function verification
 
 #### `LinkPreview.test.tsx` (3 tests)
+
 Tests the main preview component:
+
 - Component export
 - React component validation
 - Prop acceptance
@@ -76,6 +89,7 @@ npm test:coverage
 ## Test Configuration
 
 The tests are configured via `vitest.config.ts`:
+
 - **Environment**: jsdom (for DOM simulation)
 - **Globals**: Enabled (describe, it, expect available without imports)
 - **Setup**: `vitest.setup.ts` mocks React Native components and global fetch
@@ -83,12 +97,14 @@ The tests are configured via `vitest.config.ts`:
 ### Mock Strategy
 
 **React Native Mocks** (`vitest.setup.ts`):
+
 - Image, Text, TouchableOpacity, View
 - Linking.openURL
 - StyleSheet.create
 - Animated views
 
 **Global Mocks**:
+
 - `fetch` API for network requests
 
 ## Best Practices
@@ -123,6 +139,7 @@ describe('My Feature', () => {
 ## Coverage
 
 The test suite provides:
+
 - ✓ 100% utility function coverage
 - ✓ Configuration management testing
 - ✓ Component validation
@@ -139,13 +156,16 @@ npm test -- --run  # Run once and exit (good for CI)
 ## Troubleshooting
 
 **Tests not finding modules?**
+
 - Ensure `vitest.config.ts` is properly configured
 - Check that imports use correct paths relative to test file
 
 **Mock not working?**
+
 - Verify mocks are defined in `vitest.setup.ts`
 - Check mock timing and lifecycle
 
 **TypeScript errors?**
+
 - Run `npm run typecheck` to verify TypeScript compilation
 - Ensure imports use proper module resolution
