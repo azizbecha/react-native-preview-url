@@ -103,13 +103,23 @@ Our pre-commit hooks verify that the linter and tests pass when committing.
 
 ### Publishing to npm
 
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
+Releases are published from CI via the `Release` workflow
+(`.github/workflows/release.yml`), using npm's [Trusted Publishers](https://docs.npmjs.com/trusted-publishers)
+(OIDC) so no long-lived `NPM_TOKEN` is stored. Locally, `release-it` only
+handles the version bump, changelog, commit, tag, and tag push; the workflow
+runs lint, format check, typecheck, tests, build, and then `npm publish
+--provenance --access public`.
 
-To publish new versions, run the following:
+To cut a new release from `main`:
 
 ```sh
 yarn release
 ```
+
+This bumps the version per conventional commits, writes the changelog, commits
+`chore: release <version>`, tags `v<version>`, and pushes both. The tag push
+triggers the release workflow, which publishes to npm and creates a GitHub
+release.
 
 ### Scripts
 
