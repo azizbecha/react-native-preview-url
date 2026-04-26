@@ -3,15 +3,15 @@ pre-commit:
   commands:
     lint:
       glob: '*.{js,ts,jsx,tsx}'
-      run: yarn oxlint {staged_files}
+      run: pnpm oxlint {staged_files}
     format:
       glob: '*.{js,ts,jsx,tsx,json,jsonc,md,yml,yaml}'
-      run: yarn oxfmt --check {staged_files}
+      run: pnpm oxfmt --check {staged_files}
     types:
       glob: '*.{js,ts,jsx,tsx}'
-      run: yarn tsc
+      run: pnpm -r typecheck
 commit-msg:
   parallel: true
   commands:
     commitlint:
-      run: yarn commitlint --edit
+      run: pnpm commitlint --edit
