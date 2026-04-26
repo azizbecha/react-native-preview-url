@@ -1,5 +1,10 @@
 import Link from 'next/link';
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
 import { LinkPreviewDemo } from '@/components/link-preview-demo';
+
+const THREE_LINES = `import { LinkPreview } from 'react-native-preview-url';
+
+export const Card = () => <LinkPreview url="https://github.com" />;`;
 
 const FEATURES = [
   {
@@ -65,7 +70,9 @@ export default function HomePage() {
             </a>
           </div>
           <pre className="mt-2 rounded-xl border border-fd-border bg-fd-muted/50 px-4 py-2 text-sm text-fd-muted-foreground">
-            <code className="font-mono">pnpm add react-native-preview-url</code>
+            <code className="font-mono">
+              npm install react-native-preview-url
+            </code>
           </pre>
         </div>
       </section>
@@ -119,11 +126,9 @@ export default function HomePage() {
         <p className="mt-1 text-sm text-fd-muted-foreground">
           The whole API for the happy path.
         </p>
-        <pre className="mt-6 overflow-x-auto rounded-2xl border border-fd-border bg-fd-card p-6 text-sm">
-          <code className="font-mono">{`import { LinkPreview } from 'react-native-preview-url';
-
-export const Card = () => <LinkPreview url="https://github.com" />;`}</code>
-        </pre>
+        <div className="mt-6">
+          <DynamicCodeBlock lang="tsx" code={THREE_LINES} />
+        </div>
       </section>
 
       {/* CTA */}
