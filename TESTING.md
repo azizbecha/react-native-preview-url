@@ -201,37 +201,37 @@ Coverage Areas:
 ### Install Dependencies
 
 ```bash
-yarn install
+pnpm install
 ```
 
 ### Run All Tests
 
 ```bash
-yarn test
+pnpm --filter react-native-preview-url test
 ```
 
 ### Run Tests in Watch Mode
 
 ```bash
-yarn test --watch
+pnpm --filter react-native-preview-url test --watch
 ```
 
 ### Run Specific Test File
 
 ```bash
-yarn test tests/utils/getDomainFromUrl.test.ts
+pnpm --filter react-native-preview-url test tests/utils/getDomainFromUrl.test.ts
 ```
 
 ### Run Tests Matching Pattern
 
 ```bash
-yarn test --grep "error handling"
+pnpm --filter react-native-preview-url test --grep "error handling"
 ```
 
 ### Generate Coverage Report
 
 ```bash
-yarn test:coverage
+pnpm --filter react-native-preview-url test:coverage
 ```
 
 Output: `coverage/` directory with HTML report
@@ -239,7 +239,7 @@ Output: `coverage/` directory with HTML report
 ### View Test UI
 
 ```bash
-yarn test:ui
+pnpm --filter react-native-preview-url test:ui
 ```
 
 Opens browser-based interactive test UI
@@ -313,13 +313,13 @@ Target coverage percentages:
 ### Enable Verbose Output
 
 ```bash
-yarn test --reporter=verbose
+pnpm --filter react-native-preview-url test --reporter=verbose
 ```
 
 ### Run Single Test
 
 ```bash
-yarn test --reporter=verbose tests/utils/getDomainFromUrl.test.ts
+pnpm --filter react-native-preview-url test --reporter=verbose tests/utils/getDomainFromUrl.test.ts
 ```
 
 ### Debug with Node Inspector
@@ -372,11 +372,11 @@ project-root/
 
 ## Next Steps
 
-1. **Install Dependencies**: Run `yarn install`
-2. **Run Tests**: Run `yarn test` to execute all tests
-3. **Check Coverage**: Run `yarn test:coverage` to see coverage report
+1. **Install Dependencies**: Run `pnpm install`
+2. **Run Tests**: Run `pnpm --filter react-native-preview-url test` to execute all tests
+3. **Check Coverage**: Run `pnpm --filter react-native-preview-url test:coverage` to see coverage report
 4. **Review Results**: Check test output and fix any failures
-5. **Watch Mode**: Run `yarn test --watch` for development
+5. **Watch Mode**: Run `pnpm --filter react-native-preview-url test --watch` for development
 
 ## Continuous Integration
 
@@ -385,10 +385,10 @@ These tests are ready to be integrated into CI/CD pipelines:
 ```yaml
 # Example GitHub Actions workflow
 - name: Run tests
-  run: yarn test
+  run: pnpm --filter react-native-preview-url test
 
 - name: Generate coverage
-  run: yarn test:coverage
+  run: pnpm --filter react-native-preview-url test:coverage
 
 - name: Upload coverage
   uses: codecov/codecov-action@v3

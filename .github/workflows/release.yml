@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - package.json
+      - packages/react-native-preview-url/package.json
   workflow_dispatch:
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
       - name: Detect version and tag presence
         id: detect
         run: |
-          version="$(node -p "require('./package.json').version")"
+          version="$(node -p "require('./packages/react-native-preview-url/package.json').version")"
           tag="v$version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
@@ -50,13 +50,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Setup pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
 
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .nvmrc
+          cache: 'pnpm'
           # No `registry-url`: setup-node would write .npmrc with a sentinel
           # NODE_AUTH_TOKEN placeholder that takes precedence over OIDC. Without
           # it, npm publish uses the OIDC token (id-token: write) directly,
@@ -68,24 +69,25 @@ jobs:
         run: npm install -g npm@latest
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
 
       - name: Check formatting
-        run: yarn format:check
+        run: pnpm format:check
 
       - name: Typecheck
-        run: yarn typecheck
+        run: pnpm typecheck
 
       - name: Run tests
-        run: yarn test --run
+        run: pnpm --filter react-native-preview-url test --run
 
       - name: Build library
-        run: yarn prepare
+        run: pnpm prepare
 
       - name: Publish to npm with provenance
+        working-directory: packages/react-native-preview-url
         run: npm publish --provenance --access public
 
       - name: Create and push tag
