@@ -57,7 +57,10 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .nvmrc
-          registry-url: 'https://registry.npmjs.org'
+          # No `registry-url`: setup-node would write .npmrc with a sentinel
+          # NODE_AUTH_TOKEN placeholder that takes precedence over OIDC. Without
+          # it, npm publish uses the OIDC token (id-token: write) directly,
+          # which is what the npm Trusted Publisher trust expects.
 
       - name: Install dependencies
         run: yarn install --immutable
