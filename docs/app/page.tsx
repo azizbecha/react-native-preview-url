@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
 import { LinkPreviewDemo } from '@/components/link-preview-demo';
-import { Spotlight } from '@/components/landing/spotlight';
 import { TiltCard } from '@/components/landing/tilt-card';
 import { Marquee } from '@/components/landing/marquee';
 import { FloatingCards } from '@/components/landing/floating-cards';
@@ -61,11 +60,7 @@ export default function HomePage() {
   return (
     <main className="flex flex-1 flex-col overflow-x-hidden">
       {/* ═══════════════ HERO ═══════════════ */}
-      <Spotlight
-        size={800}
-        intensity={0.18}
-        className="border-b border-fd-border"
-      >
+      <section className="relative border-b border-fd-border">
         {/* aurora layers */}
         <div
           aria-hidden
@@ -186,7 +181,7 @@ export default function HomePage() {
             ))}
           </dl>
         </div>
-      </Spotlight>
+      </section>
 
       {/* ═══════════════ LIVE DEMO ═══════════════ */}
       <section className="mx-auto w-full max-w-4xl px-6 py-20">
@@ -317,7 +312,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ FINAL CTA ═══════════════ */}
-      <Spotlight size={500} intensity={0.2}>
+      <section className="relative">
         <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-5 px-6 py-24 text-center">
           <div
             aria-hidden
@@ -344,7 +339,7 @@ export default function HomePage() {
             />
           </Link>
         </div>
-      </Spotlight>
+      </section>
     </main>
   );
 }
