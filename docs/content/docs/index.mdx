@@ -1,0 +1,40 @@
+---
+title: Introduction
+description: Rich URL link previews for React Native — a tiny component, a hook, and a free hosted API.
+---
+
+`react-native-preview-url` turns any URL into a link preview card — title,
+description, image, favicon, site name — using one component or one hook.
+
+The library ships with three things:
+
+- A `<LinkPreview />` component with sensible defaults (rounded card, 16:9
+  image, accessible press behavior) that works out of the box.
+- A `useUrlPreview` hook for when you want to render the data in your own UI.
+- An in-memory cache that deduplicates concurrent requests for the same URL
+  and keeps a small LRU window of recent results.
+
+It talks to a free, open-source API (`azizbecha-link-preview-api`) hosted at
+`https://azizbecha-link-preview-api.vercel.app`. No API key required. If you'd
+rather run your own backend, see [Self-hosting](/docs/self-hosting).
+
+## At a glance
+
+```tsx
+import { LinkPreview } from 'react-native-preview-url';
+
+export function Example() {
+  return <LinkPreview url="https://github.com" />;
+}
+```
+
+That's it. The card renders, the URL opens on tap (via React Native's
+`Linking`), the response is cached for five minutes.
+
+## What's next
+
+- [Installation](/docs/installation) — add the package to your app.
+- [`<LinkPreview />`](/docs/link-preview) — props, styling, and accessibility.
+- [`useUrlPreview`](/docs/use-url-preview) — bring your own UI.
+- [Caching](/docs/caching) — tune TTLs, clear entries, disable entirely.
+- [API reference](/docs/api-reference) — exports, types, and the HTTP contract.

@@ -1,0 +1,53 @@
+---
+title: Installation
+description: Install the package and render your first preview.
+---
+
+## Install the package
+
+```bash tab="pnpm"
+pnpm add react-native-preview-url
+```
+
+```bash tab="npm"
+npm install react-native-preview-url
+```
+
+```bash tab="yarn"
+yarn add react-native-preview-url
+```
+
+`react-native-preview-url` declares `react` and `react-native` as peer
+dependencies — your app provides them. No native code, no linking step, no
+Metro config changes.
+
+## First render
+
+Drop the component anywhere a `View` would go:
+
+```tsx title="App.tsx"
+import { SafeAreaView } from 'react-native';
+import { LinkPreview } from 'react-native-preview-url';
+
+export default function App() {
+  return (
+    <SafeAreaView style={{ flex: 1, padding: 16 }}>
+      <LinkPreview url="https://github.com" />
+    </SafeAreaView>
+  );
+}
+```
+
+The first render fires a network request, shows the built-in skeleton loader,
+then swaps in the card. Tap the card and the URL opens in the user's browser.
+
+## Where to next
+
+You probably want one of:
+
+- [Style and configure the component](/docs/link-preview) — props, custom
+  loaders, fallback images, accessibility hints.
+- [Bring your own UI](/docs/use-url-preview) — drop the component, use the
+  hook directly, render whatever shape you want.
+- [Tune or disable caching](/docs/caching) — for tests, for memory-constrained
+  apps, for pull-to-refresh flows.

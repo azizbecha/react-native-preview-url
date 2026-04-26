@@ -1,0 +1,15 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "index",
+    "installation",
+    "---Components---",
+    "link-preview",
+    "use-url-preview",
+    "---Configuration---",
+    "caching",
+    "self-hosting",
+    "---Reference---",
+    "api-reference"
+  ]
+}
