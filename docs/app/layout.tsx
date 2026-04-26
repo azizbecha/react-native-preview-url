@@ -4,8 +4,8 @@ import type { ReactNode } from 'react';
 
 export const metadata = {
   title: {
-    default: 'react-native-preview-url',
-    template: '%s — react-native-preview-url',
+    default: 'React Native Preview URL — Rich link previews for React Native',
+    template: '%s — React Native Preview URL',
   },
   description:
     'Rich URL link previews for React Native. Documentation, API reference, and guides.',
