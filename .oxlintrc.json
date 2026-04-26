@@ -58,7 +58,10 @@
     "lib/",
     "coverage/",
     ".yarn/",
-    "example/dist/"
+    "example/dist/",
+    "docs/.next/",
+    "docs/.source/",
+    "docs/out/"
   ],
   "rules": {
     "no-cond-assign": "warn",

@@ -1,0 +1,87 @@
+---
+title: LinkPreview
+description: The component that renders a link card from a URL.
+---
+
+`LinkPreview` accepts a `url` and renders a card containing the page's title,
+description, image, and domain. Tapping the card opens the URL with
+`Linking.openURL` unless `onPress` is provided.
+
+## Live demo
+
+<LinkPreviewDemo url="https://github.com" titleLines={1} descriptionLines={4} />
+
+## Basic usage
+
+```tsx
+import { LinkPreview } from 'react-native-preview-url';
+
+<LinkPreview url="https://github.com" />;
+```
+
+## Props
+
+| Prop               | Type                                  | Default          | Description                                                              |
+| ------------------ | ------------------------------------- | ---------------- | ------------------------------------------------------------------------ |
+| `url`              | `string`                              | —                | **Required.** The URL to fetch a preview for. Must be `http(s)`.         |
+| `timeout`          | `number` (ms)                         | `3000`           | Server-side fetch timeout. Clamped to `[1000, 30000]`.                   |
+| `titleLines`       | `number`                              | `2`              | `numberOfLines` for the title text.                                      |
+| `descriptionLines` | `number`                              | `4`              | `numberOfLines` for the description text.                                |
+| `showUrl`          | `boolean`                             | `true`           | Render the domain badge under the description.                           |
+| `hideImage`        | `boolean`                             | `false`          | Skip rendering the OG image even when one is available.                  |
+| `visible`          | `boolean`                             | `true`           | When `false`, renders `null` after data loads — useful for animating in. |
+| `onSuccess`        | `(data: LinkPreviewResponse) => void` | —                | Called once metadata loads.                                              |
+| `onError`          | `(error: string) => void`             | —                | Called with the error message when the fetch fails.                      |
+| `onPress`          | `(data: LinkPreviewResponse) => void` | —                | Override the default `Linking.openURL` behavior on tap.                  |
+| `containerStyle`   | `ViewStyle`                           | —                | Style override for the outer card.                                       |
+| `imageStyle`       | `ImageStyle`                          | —                | Style override for the OG image.                                         |
+| `titleStyle`       | `TextStyle`                           | —                | Style override for the title.                                            |
+| `descriptionStyle` | `TextStyle`                           | —                | Style override for the description.                                      |
+| `urlStyle`         | `TextStyle`                           | —                | Style override for the domain badge.                                     |
+| `loaderComponent`  | `React.ReactNode`                     | built-in spinner | Replace the loading state entirely.                                      |
+| `fallbackImage`    | `ImageSourcePropType`                 | —                | Local image used when the OG image is missing or fails to load.          |
+
+## States
+
+- **Loading.** The card renders `loaderComponent` (default: a centered
+  `ActivityIndicator`). The hook resolves to `{ loading: true }`.
+- **Success.** The card renders the title, description, optional image, and
+  optional domain badge. `onSuccess` fires once.
+- **Error.** Returns `null` and fires `onError(message)`. Provide an error
+  fallback by checking the cached error via `useUrlPreview` if you need one.
+- **`visible: false`.** Returns `null` regardless of state — handy when you
+  want to mount the preview early (to warm the cache) and reveal it later.
+
+## Tap behavior + accessibility
+
+The card is a `TouchableOpacity` with `accessibilityRole="link"`. The label is
+auto-derived from the title and description; the hint announces the destination
+domain. Tap behavior:
+
+- If `onPress` is provided, it is called with the metadata.
+- Otherwise, `Linking.openURL(data.url)` opens the canonical URL in the
+  system browser / OS handler.
+
+## Customizing styles
+
+Defaults are intentionally minimal. Override any of the `*Style` props to
+match your design system:
+
+```tsx
+<LinkPreview
+  url="https://example.com"
+  containerStyle={{
+    borderRadius: 16,
+    backgroundColor: '#0f172a',
+    padding: 12,
+  }}
+  titleStyle={{ color: '#f1f5f9', fontWeight: '600' }}
+  descriptionStyle={{ color: '#94a3b8' }}
+  urlStyle={{ color: '#64748b' }}
+/>
+```
+
+## Custom layout
+
+If the built-in card is too opinionated, drop down to
+[`useUrlPreview`](/docs/use-url-preview) and render the data yourself.

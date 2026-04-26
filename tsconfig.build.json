@@ -2,6 +2,7 @@
   "extends": "./tsconfig",
   "exclude": [
     "__mocks__",
+    "docs",
     "example",
     "lib",
     "tests",

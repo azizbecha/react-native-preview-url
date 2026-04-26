@@ -13,6 +13,10 @@
     "lib/",
     "coverage/",
     "node_modules/",
-    "example/dist/"
+    "example/dist/",
+    "docs/.next/",
+    "docs/.source/",
+    "docs/out/",
+    "docs/content/"
   ]
 }
