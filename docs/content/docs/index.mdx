@@ -6,17 +6,34 @@ description: Rich URL link previews for React Native — a tiny component, a hoo
 `react-native-preview-url` turns any URL into a link preview card — title,
 description, image, favicon, site name — using one component or one hook.
 
-The library ships with three things:
+## What it ships
 
-- A `<LinkPreview />` component with sensible defaults (rounded card, 16:9
-  image, accessible press behavior) that works out of the box.
-- A `useUrlPreview` hook for when you want to render the data in your own UI.
-- An in-memory cache that deduplicates concurrent requests for the same URL
-  and keeps a small LRU window of recent results.
+<Cards>
+  <Card
+    title="<LinkPreview />"
+    href="/docs/link-preview"
+    description="Drop-in card with rounded corners, 16:9 image, accessible press-to-open behavior. Override every visual via *Style props."
+  />
+  <Card
+    title="useUrlPreview"
+    href="/docs/use-url-preview"
+    description="The lower-level hook. Returns { loading, data, error }. Render whatever shape your design system needs."
+  />
+  <Card
+    title="In-memory cache"
+    href="/docs/caching"
+    description="LRU with separate TTLs for success/error. Concurrent requests dedupe automatically. Scoped by base URL."
+  />
+  <Card
+    title="Free hosted API"
+    href="/docs/self-hosting"
+    description="No API key. Or run the open-source backend yourself when you outgrow the free tier."
+  />
+</Cards>
 
-It talks to a free, open-source API (`azizbecha-link-preview-api`) hosted at
-`https://azizbecha-link-preview-api.vercel.app`. No API key required. If you'd
-rather run your own backend, see [Self-hosting](/docs/self-hosting).
+## Try it
+
+<LinkPreviewDemo />
 
 ## At a glance
 
@@ -31,10 +48,27 @@ export function Example() {
 That's it. The card renders, the URL opens on tap (via React Native's
 `Linking`), the response is cached for five minutes.
 
-## What's next
+## Where to go next
 
-- [Installation](/docs/installation) — add the package to your app.
-- [`<LinkPreview />`](/docs/link-preview) — props, styling, and accessibility.
-- [`useUrlPreview`](/docs/use-url-preview) — bring your own UI.
-- [Caching](/docs/caching) — tune TTLs, clear entries, disable entirely.
-- [API reference](/docs/api-reference) — exports, types, and the HTTP contract.
+<Cards>
+  <Card
+    title="Installation"
+    href="/docs/installation"
+    description="One install, zero native steps."
+  />
+  <Card
+    title="Component reference"
+    href="/docs/link-preview"
+    description="All 18 props, with the actual defaults."
+  />
+  <Card
+    title="Hook reference"
+    href="/docs/use-url-preview"
+    description="Bring your own UI."
+  />
+  <Card
+    title="API reference"
+    href="/docs/api-reference"
+    description="Types, exports, the HTTP contract."
+  />
+</Cards>

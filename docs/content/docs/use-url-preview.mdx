@@ -25,7 +25,9 @@ The hook re-runs whenever `url` or `timeout` changes. Concurrent renders for
 the same URL share a single in-flight request — only one network call goes
 out, even across many components.
 
-## Custom UI
+## Recipes
+
+### Inline mention chip
 
 ```tsx
 import { Image, Pressable, Text, View, Linking } from 'react-native';
@@ -53,6 +55,34 @@ export function Mention({ url }: { url: string }) {
 }
 ```
 
+### Conditional rendering
+
+```tsx
+const { data } = useUrlPreview(url);
+
+return (
+  <Card>
+    <Title>{post.body}</Title>
+    {data?.images?.[0] && <FeatureImage src={data.images[0].url} />}
+  </Card>
+);
+```
+
+### Reacting outside of render
+
+Because the hook is just `{ loading, data, error }`, you can `useEffect` on
+the data:
+
+```tsx
+const { data } = useUrlPreview(url);
+
+useEffect(() => {
+  if (data?.siteName) {
+    setHeaderTitle(data.siteName);
+  }
+}, [data]);
+```
+
 ## Error states
 
 `error` is a human-readable string. The most common values:
@@ -65,11 +95,14 @@ export function Mention({ url }: { url: string }) {
 | `Error <status>`     | Server returned a non-2xx without a JSON body.                          |
 | (server-provided)    | Server returned a JSON `{ "error": "..." }` body — that string is used. |
 
+<Callout type="warn">
+  Timeout errors are *not* cached (they're treated as transient). Other server
+  errors are cached for 30 seconds by default to avoid hammering a flaky
+  endpoint. See [Caching](/docs/caching) to tune those windows.
+</Callout>
+
 `URL is required` and `Invalid URL format` short-circuit synchronously — no
-network call is made, no cache entry is created. Timeout errors are _not_
-cached (they're treated as transient); other server errors are cached for 30
-seconds by default to avoid hammering a flaky endpoint. See
-[Caching](/docs/caching) to tune those windows.
+network call is made, no cache entry is created.
 
 ## Loading semantics
 
@@ -80,8 +113,8 @@ without a loading flash for warm cache hits.
 
 ```tsx
 const { loading, data } = useUrlPreview(url);
-//  warm cache: { loading: false, data: <full object> }
-//  cold:        { loading: true,  data: null }
+// warm cache: { loading: false, data: <full object> }
+// cold:        { loading: true,  data: null }
 ```
 
 ## Cancellation

@@ -3,27 +3,70 @@ title: Installation
 description: Install the package and render your first preview.
 ---
 
-## Install the package
+<Steps>
 
-```bash tab="pnpm"
+<Step>
+
+### Install the package
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
+
+<Tab value="pnpm">
+
+```bash
 pnpm add react-native-preview-url
 ```
 
-```bash tab="npm"
+</Tab>
+
+<Tab value="npm">
+
+```bash
 npm install react-native-preview-url
 ```
 
-```bash tab="yarn"
+</Tab>
+
+<Tab value="yarn">
+
+```bash
 yarn add react-native-preview-url
 ```
 
+</Tab>
+
+<Tab value="bun">
+
+```bash
+bun add react-native-preview-url
+```
+
+</Tab>
+
+</Tabs>
+
+</Step>
+
+<Step>
+
+### Confirm peer deps
+
 `react-native-preview-url` declares `react` and `react-native` as peer
-dependencies — your app provides them. No native code, no linking step, no
-Metro config changes.
+dependencies — your app provides them. No native code, no autolinking step,
+no Metro config changes.
 
-## First render
+<Callout type="info">
+  Works on React Native (iOS + Android), Expo (managed and bare), and React
+  Native Web. Same component, no platform branches.
+</Callout>
 
-Drop the component anywhere a `View` would go:
+</Step>
+
+<Step>
+
+### Render your first card
+
+Drop it anywhere a `View` would go:
 
 ```tsx title="App.tsx"
 import { SafeAreaView } from 'react-native';
@@ -41,13 +84,32 @@ export default function App() {
 The first render fires a network request, shows the built-in skeleton loader,
 then swaps in the card. Tap the card and the URL opens in the user's browser.
 
+</Step>
+
+</Steps>
+
+## Live preview
+
+The same component, running in this page via `react-native-web`:
+
+<LinkPreviewDemo />
+
 ## Where to next
 
-You probably want one of:
-
-- [Style and configure the component](/docs/link-preview) — props, custom
-  loaders, fallback images, accessibility hints.
-- [Bring your own UI](/docs/use-url-preview) — drop the component, use the
-  hook directly, render whatever shape you want.
-- [Tune or disable caching](/docs/caching) — for tests, for memory-constrained
-  apps, for pull-to-refresh flows.
+<Cards>
+  <Card
+    title="Customize the component"
+    href="/docs/link-preview"
+    description="Props, styling, custom press, fallback image, accessibility."
+  />
+  <Card
+    title="Bring your own UI"
+    href="/docs/use-url-preview"
+    description="Drop the component, use the hook, render whatever shape."
+  />
+  <Card
+    title="Tune the cache"
+    href="/docs/caching"
+    description="For tests, memory-constrained apps, pull-to-refresh flows."
+  />
+</Cards>

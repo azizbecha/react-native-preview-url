@@ -21,15 +21,22 @@ goes out and all four receive the same resolved promise.
 | `errorTtl` | `30 * 1000` ms     | Lifetime of a cached error (30 seconds).               |
 | `enabled`  | `true`             | Master switch. When `false`, every read misses.        |
 
-LRU eviction promotes accessed entries on read, so frequently-viewed URLs stay
-warm. Expired entries are deleted lazily on the next read.
+LRU eviction promotes accessed entries on read, so frequently-viewed URLs
+stay warm. Expired entries are deleted lazily on the next read.
 
-## Tuning
+## API
+
+Three functions to control the cache, plus one type.
+
+### `configureCache(options)`
 
 Configure once at app startup. `configureCache` accepts any subset of options;
-unspecified keys keep their current value. Note that **calling
-`configureCache` resets the cache** — a clean slate is safer when changing
-sizing parameters.
+unspecified keys keep their current value.
+
+<Callout type="warn">
+  Calling `configureCache` *resets* the cache — a clean slate is safer when
+  changing sizing parameters.
+</Callout>
 
 ```tsx
 import { configureCache } from 'react-native-preview-url';
@@ -41,7 +48,7 @@ configureCache({
 });
 ```
 
-## Clearing entries
+### `clearCache()` and `invalidateUrl(url)`
 
 ```tsx
 import { clearCache, invalidateUrl } from 'react-native-preview-url';
@@ -55,7 +62,7 @@ invalidateUrl('https://github.com');
 
 Both functions are no-ops when the cache is disabled.
 
-## Disabling
+### Disabling
 
 ```tsx
 configureCache({ enabled: false });
@@ -69,23 +76,7 @@ Useful in tests where you want each render to hit a mocked fetch, or in
 memory-constrained environments where you'd rather pay the network cost than
 hold metadata in RAM.
 
-## Scoping by base URL
-
-Cache keys are scoped by the base URL configured via
-[`setBaseUrl`](/docs/api-reference#setbaseurl). Switching environments
-mid-session — say, pointing the lib at a staging API — does not leak entries
-from one environment into another. Each base URL gets its own slice.
-
-## What is _not_ cached
-
-- **Timeout errors.** If a request times out, the result is _not_ written to
-  the error cache. Timeouts are treated as transient — the next render
-  retries. Other server errors (4xx, 5xx with JSON body, etc.) _are_ cached
-  for `errorTtl`.
-- **Invalid URL errors.** `URL is required` and `Invalid URL format` short
-  circuit before any network call and don't touch the cache.
-
-## `CacheOptions`
+### `CacheOptions`
 
 ```ts
 import type { CacheOptions } from 'react-native-preview-url';
@@ -97,3 +88,28 @@ interface CacheOptions {
   enabled?: boolean;
 }
 ```
+
+## Behavior details
+
+### Scoping by base URL
+
+Cache keys are scoped by the base URL configured via
+[`setBaseUrl`](/docs/api-reference#setbaseurl). Switching environments
+mid-session — say, pointing the lib at a staging API — does not leak entries
+from one environment into another. Each base URL gets its own slice.
+
+### What is _not_ cached
+
+- **Timeout errors.** If a request times out, the result is _not_ written to
+  the error cache. Timeouts are treated as transient — the next render
+  retries. Other server errors (4xx, 5xx with JSON body, etc.) _are_ cached
+  for `errorTtl`.
+- **Invalid URL errors.** `URL is required` and `Invalid URL format` short
+  circuit before any network call and don't touch the cache.
+
+### Deduplication
+
+When N components ask for the same URL concurrently, the cache stores the
+in-flight `Promise` — every consumer awaits the same one. Only one network
+call goes out. Once it resolves, the result is written to the entry cache and
+the in-flight slot is cleared.
