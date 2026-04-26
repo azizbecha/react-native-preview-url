@@ -1,0 +1,16 @@
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Fumadocs MDX generated source
+.source/
+
+# logs
+*.log
+
+# typescript
+*.tsbuildinfo
+
+# misc
+.DS_Store

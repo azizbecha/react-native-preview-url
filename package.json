@@ -42,7 +42,10 @@
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "clean": "del-cli lib",
-    "prepare": "bob build"
+    "prepare": "bob build",
+    "docs": "yarn workspace react-native-preview-url-docs",
+    "docs:dev": "yarn workspace react-native-preview-url-docs dev",
+    "docs:build": "yarn workspace react-native-preview-url-docs build"
   },
   "keywords": [
     "react-native",
@@ -90,7 +93,8 @@
     "react-native": "*"
   },
   "workspaces": [
-    "example"
+    "example",
+    "docs"
   ],
   "packageManager": "yarn@3.6.1",
   "jest": {

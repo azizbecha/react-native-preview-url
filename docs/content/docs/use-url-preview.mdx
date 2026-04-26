@@ -1,0 +1,84 @@
+---
+title: useUrlPreview
+description: The hook that powers LinkPreview — use it directly when you need a custom UI.
+---
+
+`useUrlPreview` fetches and caches link metadata for a URL. It returns the
+loading state, the parsed data, and a string error. Use it when the built-in
+`LinkPreview` card doesn't fit your design.
+
+## Signature
+
+```ts
+function useUrlPreview(
+  url: string,
+  timeout?: number // ms; default 3000, clamped to [1000, 30000]
+): {
+  loading: boolean;
+  data: LinkPreviewResponse | null;
+  error: string | null;
+};
+```
+
+## Example
+
+```tsx
+import { useUrlPreview } from 'react-native-preview-url';
+import { ActivityIndicator, Image, Text, View } from 'react-native';
+
+export function CustomCard({ url }: { url: string }) {
+  const { loading, data, error } = useUrlPreview(url);
+
+  if (loading) return <ActivityIndicator />;
+  if (error) return <Text>Couldn't load preview: {error}</Text>;
+  if (!data) return null;
+
+  const image = data.images?.[0]?.url;
+
+  return (
+    <View>
+      {image ? (
+        <Image source={{ uri: image }} style={{ aspectRatio: 16 / 9 }} />
+      ) : null}
+      <Text>{data.title}</Text>
+      <Text>{data.description}</Text>
+    </View>
+  );
+}
+```
+
+## Behavior
+
+- **Validates the URL.** If `url` is empty or non-`http(s)`, `error` is set
+  immediately and no network call happens.
+- **Cache-first.** Successful responses and errors are cached separately
+  (different TTLs). Cached hits resolve synchronously on the next render.
+- **Request de-duplication.** If two components mount with the same URL at
+  the same time, a single fetch is shared between them.
+- **Cancellable.** Unmounting (or changing `url`) cancels the in-flight state
+  update — the underlying fetch may still complete and populate the cache.
+- **Timeout.** The `timeout` argument is sent to the proxy API as a query
+  parameter and is also enforced client-side via `AbortController`.
+
+## Return shape
+
+`LinkPreviewResponse` (parsed JSON from the proxy):
+
+```ts
+interface LinkPreviewResponse {
+  url: string; // canonical URL after redirects
+  title?: string;
+  description?: string;
+  images?: PreviewImage[]; // ordered, OG image first
+  favicons?: string[];
+  mediaType?: string; // e.g. 'website', 'article'
+  contentType?: string; // 'text/html', etc.
+  siteName?: string;
+}
+
+interface PreviewImage {
+  url: string;
+  width?: number;
+  height?: number;
+}
+```

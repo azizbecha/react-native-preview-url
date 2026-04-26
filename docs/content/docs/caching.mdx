@@ -1,0 +1,77 @@
+---
+title: Caching
+description: TTL, sizing, and invalidation for the in-memory metadata cache.
+---
+
+The library ships with a single in-memory LRU cache shared across every
+`LinkPreview` and `useUrlPreview` call in the app. There is one cache instance
+per JS process — configure it once at app startup.
+
+## Defaults
+
+| Option     | Default           | Notes                                                                      |
+| ---------- | ----------------- | -------------------------------------------------------------------------- |
+| `maxSize`  | `50`              | Number of entries (success + error). LRU eviction.                         |
+| `ttl`      | `300_000` (5 min) | TTL for successful responses.                                              |
+| `errorTtl` | `30_000` (30 s)   | TTL for cached errors. Short on purpose so transient failures don't stick. |
+| `enabled`  | `true`            | Set `false` to disable caching globally.                                   |
+
+## Configure at startup
+
+`configureCache` resets the cache and applies new options. Call it once,
+typically in your root file:
+
+```ts
+// App.tsx (or your entry file)
+import { configureCache } from 'react-native-preview-url';
+
+configureCache({
+  maxSize: 200,
+  ttl: 60 * 60 * 1000, // 1 hour for successes
+  errorTtl: 5 * 60 * 1000, // 5 min for errors
+});
+```
+
+The cache is keyed by the proxy base URL plus the requested URL, so changing
+the base URL (via [`setBaseUrl`](/docs/api-reference#setbaseurl)) effectively
+gives you a fresh cache.
+
+## Disable caching
+
+```ts
+configureCache({ enabled: false });
+```
+
+With caching disabled, every render that fetches a URL hits the network. You
+probably don't want this in production — the cache is the main reason the
+component feels instant on re-render.
+
+## Invalidate a specific URL
+
+```ts
+import { invalidateUrl } from 'react-native-preview-url';
+
+invalidateUrl('https://example.com/post/123');
+```
+
+Useful after you publish or update content and want the next render to pick up
+fresh metadata.
+
+## Clear everything
+
+```ts
+import { clearCache } from 'react-native-preview-url';
+
+clearCache();
+```
+
+Drops all entries (success and error). Doesn't affect in-flight requests.
+
+## What's not in scope
+
+- **Persistent caching.** Entries live in memory only — they don't survive
+  app restarts. If you need persistence, wrap your storage with a small layer
+  that hydrates the cache on launch and writes through `useUrlPreview`'s
+  `onSuccess`.
+- **Per-component cache options.** The cache is global. Different components
+  cannot have different TTLs.

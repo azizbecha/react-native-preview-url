@@ -1,0 +1,69 @@
+---
+title: Introduction
+description: A small, opinionated React Native component for rendering rich URL link previews.
+---
+
+`react-native-preview-url` is a single-purpose component library: paste a URL,
+get back a link card with title, description, image, and domain — automatically
+fetched via a proxy API that parses the page's Open Graph and meta tags.
+
+## Highlights
+
+- **Zero native code.** Pure JS/TS. Works on iOS, Android, and the web (via
+  React Native Web).
+- **Built-in caching.** In-memory LRU with separate TTLs for successful
+  responses and errors. Globally configurable.
+- **In-flight de-duplication.** Two `LinkPreview`s for the same URL share a
+  single network request.
+- **Tiny.** ~21 kB packed, no runtime dependencies beyond React Native peers.
+
+<Cards>
+  <Card
+    title="Installation"
+    href="/docs/installation"
+    description="Add the package and peer deps."
+  />
+  <Card
+    title="The LinkPreview component"
+    href="/docs/link-preview"
+    description="Props, behavior, and a live demo."
+  />
+  <Card
+    title="useUrlPreview hook"
+    href="/docs/use-url-preview"
+    description="Fetch metadata without rendering."
+  />
+  <Card
+    title="Caching"
+    href="/docs/caching"
+    description="TTL, sizing, and invalidation."
+  />
+</Cards>
+
+## Quick start
+
+```tsx
+import { LinkPreview } from 'react-native-preview-url';
+
+export function MyScreen() {
+  return (
+    <LinkPreview
+      url="https://github.com"
+      onError={(e) => console.warn(e)}
+      onSuccess={(data) => console.log(data)}
+      titleLines={1}
+      descriptionLines={4}
+    />
+  );
+}
+```
+
+<LinkPreviewDemo url="https://github.com" titleLines={1} descriptionLines={4} />
+
+## How it works
+
+The component does not parse Open Graph metadata on-device. It calls a hosted
+proxy API (`https://azizbecha-link-preview-api.vercel.app` by default) which
+fetches the URL server-side, parses the metadata, and returns JSON. This
+sidesteps CORS issues and the bundle cost of an HTML/OG parser. You can point
+it at your own deployment via [`setBaseUrl`](/docs/api-reference#setbaseurl).

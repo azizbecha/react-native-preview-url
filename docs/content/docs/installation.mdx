@@ -1,0 +1,78 @@
+---
+title: Installation
+description: Add react-native-preview-url to your project.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+## Install the package
+
+<Tabs items={['yarn', 'npm', 'pnpm', 'bun']}>
+  <Tab value="yarn">
+
+```sh
+yarn add react-native-preview-url
+```
+
+  </Tab>
+  <Tab value="npm">
+
+```sh
+npm install react-native-preview-url
+```
+
+  </Tab>
+  <Tab value="pnpm">
+
+```sh
+pnpm add react-native-preview-url
+```
+
+  </Tab>
+  <Tab value="bun">
+
+```sh
+bun add react-native-preview-url
+```
+
+  </Tab>
+</Tabs>
+
+## Peer dependencies
+
+The package declares `react` and `react-native` as peers and uses whatever
+versions your app already has. Both are required:
+
+```jsonc
+{
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  }
+}
+```
+
+No additional native steps are required — there's no `pod install`, no Gradle
+edits, no Expo plugin. Import and render.
+
+## TypeScript
+
+Type definitions ship with the package — no `@types/react-native-preview-url`
+needed. The currently exported public type is:
+
+```ts
+import type { CacheOptions } from 'react-native-preview-url';
+```
+
+The component prop and response shapes are inferred from the named exports
+(`LinkPreview`, `useUrlPreview`). See the [API reference](/docs/api-reference)
+for full signatures.
+
+## Web (React Native Web)
+
+The library uses only `View`, `Text`, `Image`, `TouchableOpacity`, and
+`StyleSheet` from `react-native`. All of these are implemented by
+[`react-native-web`](https://necolas.github.io/react-native-web/), so the
+component renders correctly on the web with no extra code — assuming your
+bundler aliases `react-native` to `react-native-web` (Expo's web target does
+this automatically).

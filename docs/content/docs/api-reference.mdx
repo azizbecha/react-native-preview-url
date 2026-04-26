@@ -1,0 +1,126 @@
+---
+title: API reference
+description: Every exported symbol, with signatures.
+---
+
+The package's public surface lives in `react-native-preview-url`:
+
+```ts
+import {
+  LinkPreview, // default and named
+  useUrlPreview,
+  setBaseUrl,
+  configureCache,
+  clearCache,
+  invalidateUrl,
+  type CacheOptions,
+} from 'react-native-preview-url';
+```
+
+## Components
+
+### `LinkPreview`
+
+Rendered card. See [LinkPreview](/docs/link-preview).
+
+```ts
+const LinkPreview: React.FC<LinkPreviewProps>;
+```
+
+## Hooks
+
+### `useUrlPreview`
+
+Fetch + cache metadata. See [useUrlPreview](/docs/use-url-preview).
+
+```ts
+function useUrlPreview(
+  url: string,
+  timeout?: number
+): {
+  loading: boolean;
+  data: LinkPreviewResponse | null;
+  error: string | null;
+};
+```
+
+## Configuration
+
+### `setBaseUrl`
+
+Override the proxy API endpoint. Defaults to
+`https://azizbecha-link-preview-api.vercel.app`. Throws `TypeError` for
+non-`http(s)` strings. Trailing slashes are stripped.
+
+```ts
+import { setBaseUrl } from 'react-native-preview-url';
+
+setBaseUrl('https://my-link-preview.example.com');
+```
+
+You can self-host the proxy from
+[the source repo](https://github.com/azizbecha/react-native-preview-url)
+to avoid the public endpoint entirely.
+
+### `configureCache`
+
+Reset and reconfigure the global metadata cache. See [Caching](/docs/caching).
+
+```ts
+function configureCache(options: CacheOptions): void;
+
+interface CacheOptions {
+  maxSize?: number; // default 50
+  ttl?: number; // ms; default 300_000 (5 min)
+  errorTtl?: number; // ms; default 30_000 (30 s)
+  enabled?: boolean; // default true
+}
+```
+
+### `clearCache`
+
+Remove every entry. In-flight requests are unaffected.
+
+```ts
+function clearCache(): void;
+```
+
+### `invalidateUrl`
+
+Drop the cached entry for a specific URL. Next render that requests it will
+re-fetch.
+
+```ts
+function invalidateUrl(url: string): void;
+```
+
+## Types
+
+### `CacheOptions`
+
+Exported. See [`configureCache`](#configurecache).
+
+### `LinkPreviewResponse`
+
+The parsed proxy response. **Currently not exported from the package root** —
+if you need the type, import the package's source via your bundler or
+re-declare the shape locally:
+
+```ts
+interface PreviewImage {
+  url: string;
+  width?: number;
+  height?: number;
+}
+
+interface LinkPreviewResponse {
+  url: string;
+  title?: string;
+  description?: string;
+  images?: PreviewImage[];
+  favicons?: string[];
+  mediaType?: string;
+  contentType?: string;
+  siteName?: string;
+}
+```
