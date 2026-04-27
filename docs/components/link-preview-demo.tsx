@@ -1,15 +1,36 @@
 'use client';
 
-import { useId, useState, type FormEvent, type ReactNode } from 'react';
+import {
+  useId,
+  useState,
+  type ComponentType,
+  type FormEvent,
+  type ReactNode,
+  type SVGProps,
+} from 'react';
+import {
+  SiGithub,
+  SiLinear,
+  SiStripe,
+  SiVercel,
+  SiWikipedia,
+  SiYoutube,
+} from '@icons-pack/react-simple-icons';
 import { LinkPreview } from 'react-native-preview-url';
 
-const PRESETS = [
-  { label: 'GitHub', url: 'https://github.com', emoji: '🐙' },
-  { label: 'Vercel', url: 'https://vercel.com', emoji: '▲' },
-  { label: 'Linear', url: 'https://linear.app', emoji: '✨' },
-  { label: 'Wikipedia', url: 'https://en.wikipedia.org/wiki/Linkin_Park', emoji: '📚' }, // prettier-ignore
-  { label: 'YouTube', url: 'https://youtube.com', emoji: '▶' },
-  { label: 'Stripe', url: 'https://stripe.com', emoji: '💳' },
+type IconComponent = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>;
+
+const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
+  { label: 'GitHub', url: 'https://github.com', icon: SiGithub },
+  { label: 'Vercel', url: 'https://vercel.com', icon: SiVercel },
+  { label: 'Linear', url: 'https://linear.app', icon: SiLinear },
+  {
+    label: 'Wikipedia',
+    url: 'https://en.wikipedia.org/wiki/Linkin_Park',
+    icon: SiWikipedia,
+  },
+  { label: 'YouTube', url: 'https://youtube.com', icon: SiYoutube },
+  { label: 'Stripe', url: 'https://stripe.com', icon: SiStripe },
 ];
 
 export function LinkPreviewDemo() {
@@ -90,6 +111,7 @@ export function LinkPreviewDemo() {
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
             {PRESETS.map((p) => {
               const active = submitted === p.url;
+              const Icon = p.icon;
               return (
                 <button
                   key={p.url}
@@ -101,12 +123,11 @@ export function LinkPreviewDemo() {
                       : 'border-fd-border bg-fd-background text-fd-muted-foreground hover:border-fd-primary/40 hover:text-fd-foreground'
                   }`}
                 >
-                  <span
+                  <Icon
+                    color="currentColor"
                     aria-hidden
-                    className="text-base transition-transform group-hover/preset:scale-110"
-                  >
-                    {p.emoji}
-                  </span>
+                    className="size-4 shrink-0 transition-transform group-hover/preset:scale-110"
+                  />
                   <span className="truncate font-medium">{p.label}</span>
                 </button>
               );

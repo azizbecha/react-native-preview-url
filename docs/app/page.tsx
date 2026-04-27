@@ -8,6 +8,7 @@ import {
   PreviewMock,
   SHOWCASE_PREVIEWS,
 } from '@/components/landing/preview-mock';
+import { SiGithub } from '@icons-pack/react-simple-icons';
 import {
   ZapIcon,
   PuzzleIcon,
@@ -263,7 +264,7 @@ export default function HomePage() {
               title="GitHub · Where the world builds software"
               description="Millions of developers build, ship, and maintain their software on GitHub — the world's largest developer platform."
               domain="github.com"
-              emoji="🐙"
+              icon={SiGithub}
               gradient="bg-gradient-to-br from-slate-700 to-slate-900 text-white"
               rotate={2}
               className="motion-safe:animate-float-slow"

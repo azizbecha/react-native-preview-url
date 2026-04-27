@@ -1,9 +1,24 @@
+import {
+  SiExpo,
+  SiFigma,
+  SiGithub,
+  SiLinear,
+  SiYcombinator,
+  SiStripe,
+  SiVercel,
+  SiWikipedia,
+  SiYoutube,
+} from '@icons-pack/react-simple-icons';
+import type { ComponentType, SVGProps } from 'react';
+
+type IconComponent = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>;
+
 interface Props {
   title: string;
   description: string;
   domain: string;
-  emoji: string;
-  /** Tailwind gradient class for the image stripe. */
+  icon: IconComponent;
+  /** Tailwind classes for the image stripe (background + text color). */
   gradient: string;
   rotate?: number;
   className?: string;
@@ -18,7 +33,7 @@ export function PreviewMock({
   title,
   description,
   domain,
-  emoji,
+  icon: Icon,
   gradient,
   rotate = 0,
   className = '',
@@ -29,9 +44,13 @@ export function PreviewMock({
       style={{ transform: `rotate(${rotate}deg)` }}
     >
       <div
-        className={`relative flex aspect-video items-center justify-center overflow-hidden rounded-xl text-4xl ${gradient}`}
+        className={`relative flex aspect-video items-center justify-center overflow-hidden rounded-xl ${gradient}`}
       >
-        <span className="drop-shadow-sm">{emoji}</span>
+        <Icon
+          color="currentColor"
+          className="size-12 drop-shadow-sm"
+          aria-hidden
+        />
       </div>
       <div className="px-1">
         <p className="line-clamp-2 text-sm font-semibold leading-snug">
@@ -54,7 +73,7 @@ export const SHOWCASE_PREVIEWS: Array<Omit<Props, 'rotate' | 'className'>> = [
     description:
       'Millions of developers build, ship, and maintain their software on GitHub.',
     domain: 'github.com',
-    emoji: '🐙',
+    icon: SiGithub,
     gradient: 'bg-gradient-to-br from-slate-700 to-slate-900 text-white',
   },
   {
@@ -62,7 +81,7 @@ export const SHOWCASE_PREVIEWS: Array<Omit<Props, 'rotate' | 'className'>> = [
     description:
       'Vercel gives you the developer tools and cloud infrastructure to build, scale, and secure faster.',
     domain: 'vercel.com',
-    emoji: '▲',
+    icon: SiVercel,
     gradient: 'bg-gradient-to-br from-zinc-900 to-black text-white',
   },
   {
@@ -70,7 +89,7 @@ export const SHOWCASE_PREVIEWS: Array<Omit<Props, 'rotate' | 'className'>> = [
     description:
       'Meet the new standard for modern software development. Streamline issues, sprints, and product roadmaps.',
     domain: 'linear.app',
-    emoji: '✨',
+    icon: SiLinear,
     gradient: 'bg-gradient-to-br from-indigo-500 to-purple-700 text-white',
   },
   {
@@ -78,15 +97,16 @@ export const SHOWCASE_PREVIEWS: Array<Omit<Props, 'rotate' | 'className'>> = [
     description:
       'Build better products as a team. Design, prototype, and gather feedback all in one place.',
     domain: 'figma.com',
-    emoji: '🎨',
-    gradient: 'bg-gradient-to-br from-rose-400 via-orange-400 to-amber-300',
+    icon: SiFigma,
+    gradient:
+      'bg-gradient-to-br from-rose-400 via-orange-400 to-amber-300 text-white',
   },
   {
     title: 'Stripe | Payment processing platform for the internet',
     description:
       'Stripe powers online and in-person payment processing and financial solutions for businesses of all sizes.',
     domain: 'stripe.com',
-    emoji: '💳',
+    icon: SiStripe,
     gradient: 'bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white',
   },
   {
@@ -94,7 +114,7 @@ export const SHOWCASE_PREVIEWS: Array<Omit<Props, 'rotate' | 'className'>> = [
     description:
       'Create universal native apps with React that run on Android, iOS, and the web.',
     domain: 'expo.dev',
-    emoji: '📱',
+    icon: SiExpo,
     gradient: 'bg-gradient-to-br from-teal-400 to-cyan-600 text-white',
   },
   {
@@ -102,7 +122,7 @@ export const SHOWCASE_PREVIEWS: Array<Omit<Props, 'rotate' | 'className'>> = [
     description:
       'Welcome to Wikipedia, the free encyclopedia that anyone can edit. 6,800,000+ articles.',
     domain: 'wikipedia.org',
-    emoji: '📚',
+    icon: SiWikipedia,
     gradient: 'bg-gradient-to-br from-stone-100 to-stone-300 text-stone-900',
   },
   {
@@ -110,7 +130,15 @@ export const SHOWCASE_PREVIEWS: Array<Omit<Props, 'rotate' | 'className'>> = [
     description:
       'Hacker News is a social news website focusing on computer science and entrepreneurship.',
     domain: 'news.ycombinator.com',
-    emoji: '🟧',
+    icon: SiYcombinator,
     gradient: 'bg-gradient-to-br from-orange-500 to-orange-700 text-white',
+  },
+  {
+    title: 'YouTube — Broadcast yourself',
+    description:
+      'Enjoy the videos and music you love, upload original content, and share it all.',
+    domain: 'youtube.com',
+    icon: SiYoutube,
+    gradient: 'bg-gradient-to-br from-red-500 to-red-700 text-white',
   },
 ];

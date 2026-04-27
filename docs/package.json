@@ -11,6 +11,7 @@
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
+    "@icons-pack/react-simple-icons": "^13.13.0",
     "fumadocs-core": "^16.8.4",
     "fumadocs-mdx": "^14.3.1",
     "fumadocs-ui": "^16.8.4",
