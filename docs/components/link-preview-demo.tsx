@@ -9,10 +9,11 @@ import {
   type SVGProps,
 } from 'react';
 import {
+  SiBun,
   SiGithub,
+  SiMdnwebdocs,
   SiReact,
   SiVercel,
-  SiWikipedia,
   SiYoutube,
 } from '@icons-pack/react-simple-icons';
 import { LinkPreview } from 'react-native-preview-url';
@@ -35,14 +36,14 @@ const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
     icon: SiYoutube,
   },
   {
-    label: 'RN Directory',
-    url: 'https://reactnative.directory',
-    icon: SiReact,
+    label: 'MDN',
+    url: 'https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API',
+    icon: SiMdnwebdocs,
   },
   {
-    label: 'Wikipedia',
-    url: 'https://en.wikipedia.org/wiki/React_Native',
-    icon: SiWikipedia,
+    label: 'Bun',
+    url: 'https://bun.com',
+    icon: SiBun,
   },
 ];
 
