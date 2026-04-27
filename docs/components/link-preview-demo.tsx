@@ -23,7 +23,7 @@ const DEFAULT_URL = 'https://github.com/azizbecha/react-native-preview-url';
 
 const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
   { label: 'GitHub', url: DEFAULT_URL, icon: SiGithub },
-  { label: 'Vercel', url: 'https://github.com/vercel/vercel', icon: SiVercel },
+  { label: 'Vercel', url: 'https://vercel.com', icon: SiVercel },
   {
     label: 'React Native',
     url: 'https://reactnative.dev',
