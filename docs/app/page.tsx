@@ -184,7 +184,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════════ LIVE DEMO ═══════════════ */}
-      <section className="mx-auto w-full max-w-4xl px-6 py-20">
+      <section className="mx-auto w-full max-w-6xl px-6 py-20 md:py-24">
         <div className="mb-8 flex flex-col gap-2 text-center">
           <span className="mx-auto inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-fd-primary">
             <SparkleIcon className="size-3" />

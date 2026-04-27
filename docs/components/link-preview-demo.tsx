@@ -38,25 +38,34 @@ export function LinkPreviewDemo() {
   }
 
   return (
-    <div className="not-prose grid gap-8 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start">
-      <div className="flex justify-center lg:sticky lg:top-24">
-        <PhoneFrame url={submitted}>
+    <div className="not-prose grid gap-10 lg:grid-cols-2 lg:gap-12">
+      <div className="flex">
+        <PreviewCanvas>
           <LinkPreview
             key={`${submitted}|${showUrl}|${hideImage}|${titleLines}`}
             url={submitted}
             showUrl={showUrl}
             hideImage={hideImage}
             titleLines={titleLines}
+            containerStyle={{
+              backgroundColor: 'var(--color-fd-background)',
+              borderColor: 'var(--color-fd-border)',
+              shadowOpacity: 0,
+              elevation: 0,
+            }}
+            titleStyle={{ color: 'var(--color-fd-foreground)' }}
+            descriptionStyle={{ color: 'var(--color-fd-muted-foreground)' }}
+            urlStyle={{ color: 'var(--color-fd-muted-foreground)' }}
             onPress={(data) => setEvent({ type: 'press', detail: data.url })}
             onError={(err) => setEvent({ type: 'error', detail: err })}
           />
-        </PhoneFrame>
+        </PreviewCanvas>
       </div>
 
-      <div className="rounded-3xl border border-fd-border bg-fd-card/50 p-5 shadow-sm backdrop-blur sm:p-6">
+      <div className="flex flex-col gap-7 rounded-3xl border border-fd-border bg-fd-card/50 p-6 shadow-sm backdrop-blur sm:p-8">
         <ControlSection title="URL" hint="Hit Enter or tap Preview to fetch.">
-          <form onSubmit={handleSubmit} className="flex gap-2">
-            <div className="flex flex-1 items-center gap-2 rounded-xl border border-fd-border bg-fd-background px-3 transition-colors focus-within:border-fd-primary focus-within:ring-2 focus-within:ring-fd-primary/20">
+          <form onSubmit={handleSubmit} className="flex gap-2.5">
+            <div className="flex flex-1 items-center gap-2.5 rounded-xl border border-fd-border bg-fd-background px-3.5 transition-colors focus-within:border-fd-primary focus-within:ring-2 focus-within:ring-fd-primary/20">
               <LinkIcon className="size-4 shrink-0 text-fd-muted-foreground" />
               <input
                 type="url"
@@ -65,12 +74,12 @@ export function LinkPreviewDemo() {
                 placeholder="https://"
                 spellCheck={false}
                 autoCapitalize="off"
-                className="min-w-0 flex-1 bg-transparent py-2 text-sm text-fd-foreground outline-none placeholder:text-fd-muted-foreground/60"
+                className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-fd-foreground outline-none placeholder:text-fd-muted-foreground/60"
               />
             </div>
             <button
               type="submit"
-              className="rounded-xl bg-fd-primary px-4 py-2 text-sm font-semibold text-fd-primary-foreground transition-opacity hover:opacity-90 active:scale-95"
+              className="rounded-xl bg-fd-primary px-5 py-2.5 text-sm font-semibold text-fd-primary-foreground transition-opacity hover:opacity-90 active:scale-95"
             >
               Preview
             </button>
@@ -78,7 +87,7 @@ export function LinkPreviewDemo() {
         </ControlSection>
 
         <ControlSection title="Quick picks">
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
             {PRESETS.map((p) => {
               const active = submitted === p.url;
               return (
@@ -106,7 +115,7 @@ export function LinkPreviewDemo() {
         </ControlSection>
 
         <ControlSection title="Props">
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2.5 sm:grid-cols-2">
             <Toggle label="showUrl" value={showUrl} onChange={setShowUrl} />
             <Toggle
               label="hideImage"
@@ -158,74 +167,73 @@ export function LinkPreviewDemo() {
   );
 }
 
-/* ─── Phone frame ─────────────────────────────────────────────────────── */
+/* ─── Preview canvas ──────────────────────────────────────────────────── */
 
-function PhoneFrame({ url, children }: { url: string; children: ReactNode }) {
-  let domain = '';
-  try {
-    domain = new URL(url).hostname.replace(/^www\./, '');
-  } catch {
-    domain = '—';
-  }
+const PLATFORMS = ['iOS', 'Android', 'Web'] as const;
 
+function PreviewCanvas({ children }: { children: ReactNode }) {
   return (
-    <div className="relative">
-      {/* glow underneath */}
+    <div className="relative flex w-full flex-col overflow-hidden rounded-3xl border border-fd-border bg-fd-card/50 shadow-sm backdrop-blur">
+      {/* soft glows */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem] bg-gradient-to-b from-fd-primary/20 via-fd-primary/5 to-transparent blur-3xl"
+        className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-fd-primary/15 blur-3xl"
       />
-      {/* phone shell */}
-      <div className="relative w-[300px] rounded-[2.75rem] bg-gradient-to-b from-zinc-800 via-zinc-900 to-black p-[10px] shadow-2xl shadow-black/40 ring-1 ring-white/10 sm:w-[320px]">
-        {/* side buttons */}
-        <span
-          aria-hidden
-          className="absolute left-[-2px] top-24 h-12 w-[3px] rounded-l-sm bg-zinc-700"
-        />
-        <span
-          aria-hidden
-          className="absolute left-[-2px] top-40 h-20 w-[3px] rounded-l-sm bg-zinc-700"
-        />
-        <span
-          aria-hidden
-          className="absolute right-[-2px] top-32 h-16 w-[3px] rounded-r-sm bg-zinc-700"
-        />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-violet-500/15 blur-3xl"
+      />
+      {/* dotted accent */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full text-fd-foreground opacity-[0.05]"
+      >
+        <pattern
+          id="dotgrid"
+          width="20"
+          height="20"
+          patternUnits="userSpaceOnUse"
+        >
+          <circle cx="1" cy="1" r="1" fill="currentColor" />
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#dotgrid)" />
+      </svg>
 
-        {/* screen */}
-        <div className="relative overflow-hidden rounded-[2.25rem] bg-zinc-50 ring-1 ring-black/5">
-          {/* dynamic island */}
-          <div
-            aria-hidden
-            className="absolute left-1/2 top-2 z-20 h-6 w-24 -translate-x-1/2 rounded-full bg-black"
-          />
-
-          {/* status bar */}
-          <div className="flex items-center justify-between px-6 pb-1 pt-2.5 text-[11px] font-semibold text-zinc-900">
-            <span>9:41</span>
-            <span aria-hidden className="ml-20 flex items-center gap-1">
-              <SignalIcon className="size-3" />
-              <WifiIcon className="size-3" />
-              <BatteryIcon className="size-4" />
+      <div className="relative flex flex-1 flex-col gap-6 p-7 sm:gap-8 sm:p-10">
+        <header className="flex flex-wrap items-center justify-between gap-3">
+          <div className="inline-flex items-center gap-2 rounded-full border border-fd-border bg-fd-background/60 px-3 py-1 text-[11px] font-medium text-fd-muted-foreground backdrop-blur">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
             </span>
+            Live · same component, every platform
           </div>
-
-          {/* Safari-ish address bar */}
-          <div className="px-3 py-2">
-            <div className="flex items-center gap-2 rounded-xl bg-zinc-200/70 px-3 py-1.5">
-              <LockIcon className="size-3 shrink-0 text-zinc-500" />
-              <span className="truncate text-xs text-zinc-700">{domain}</span>
-              <ReloadIcon className="ml-auto size-3 shrink-0 text-zinc-500" />
-            </div>
+          <div className="inline-flex items-center gap-1 rounded-full border border-fd-border bg-fd-background/60 p-1 text-[11px] font-medium backdrop-blur">
+            {PLATFORMS.map((p) => (
+              <span
+                key={p}
+                className={`rounded-full px-2.5 py-1 transition-colors ${
+                  p === 'Web'
+                    ? 'bg-fd-foreground text-fd-background shadow-sm'
+                    : 'text-fd-muted-foreground'
+                }`}
+              >
+                {p}
+              </span>
+            ))}
           </div>
+        </header>
 
-          {/* page content */}
-          <div className="min-h-[420px] bg-zinc-50 p-4">{children}</div>
-
-          {/* home indicator */}
-          <div className="flex items-center justify-center pb-2 pt-3">
-            <span className="h-1 w-24 rounded-full bg-zinc-400/70" />
+        <div className="flex flex-1 items-center justify-center py-4">
+          <div className="w-full max-w-md drop-shadow-[0_20px_50px_rgba(0,0,0,0.18)]">
+            {children}
           </div>
         </div>
+
+        <footer className="flex items-center justify-between text-[11px] text-fd-muted-foreground">
+          <span className="font-mono">react-native-preview-url</span>
+          <span>tap the card to fire onPress</span>
+        </footer>
       </div>
     </div>
   );
@@ -243,7 +251,7 @@ function ControlSection({
   children: ReactNode;
 }) {
   return (
-    <div className="not-first:mt-5">
+    <div>
       <div className="mb-2 flex items-baseline justify-between gap-3">
         <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-fd-muted-foreground">
           {title}
@@ -355,88 +363,6 @@ function LinkIcon({ className }: { className?: string }) {
     >
       <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
       <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  );
-}
-
-function LockIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-    </svg>
-  );
-}
-
-function ReloadIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-6.36-2.64L3 16m0 5v-5h5" />
-      <path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 6.36 2.64L21 8m0-5v5h-5" />
-    </svg>
-  );
-}
-
-function SignalIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 16 16" fill="currentColor" className={className}>
-      <rect x="0" y="10" width="3" height="4" rx="0.5" />
-      <rect x="4.5" y="7" width="3" height="7" rx="0.5" />
-      <rect x="9" y="4" width="3" height="10" rx="0.5" />
-      <rect x="13.5" y="1" width="3" height="13" rx="0.5" opacity="0.4" />
-    </svg>
-  );
-}
-
-function WifiIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M2 6.5a10 10 0 0 1 12 0" />
-      <path d="M4 9a7 7 0 0 1 8 0" />
-      <path d="M6 11.5a4 4 0 0 1 4 0" />
-      <circle cx="8" cy="13.5" r="0.6" fill="currentColor" />
-    </svg>
-  );
-}
-
-function BatteryIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 12" fill="none" className={className}>
-      <rect
-        x="0.75"
-        y="0.75"
-        width="20"
-        height="10.5"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="1"
-      />
-      <rect x="22" y="4" width="1.5" height="4" rx="0.5" fill="currentColor" />
-      <rect x="2" y="2" width="16" height="8" rx="1" fill="currentColor" />
     </svg>
   );
 }
