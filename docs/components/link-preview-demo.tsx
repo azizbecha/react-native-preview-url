@@ -11,31 +11,33 @@ import {
 import {
   SiGithub,
   SiLinear,
+  SiReact,
   SiStripe,
   SiVercel,
-  SiWikipedia,
   SiYoutube,
 } from '@icons-pack/react-simple-icons';
 import { LinkPreview } from 'react-native-preview-url';
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>;
 
+const DEFAULT_URL = 'https://github.com/azizbecha/react-native-preview-url';
+
 const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
   { label: 'GitHub', url: 'https://github.com', icon: SiGithub },
   { label: 'Vercel', url: 'https://vercel.com', icon: SiVercel },
   { label: 'Linear', url: 'https://linear.app', icon: SiLinear },
   {
-    label: 'Wikipedia',
-    url: 'https://en.wikipedia.org/wiki/Linkin_Park',
-    icon: SiWikipedia,
+    label: 'React Native',
+    url: 'https://github.com/facebook/react-native',
+    icon: SiReact,
   },
   { label: 'YouTube', url: 'https://youtube.com', icon: SiYoutube },
   { label: 'Stripe', url: 'https://stripe.com', icon: SiStripe },
 ];
 
 export function LinkPreviewDemo() {
-  const [draft, setDraft] = useState('https://github.com');
-  const [submitted, setSubmitted] = useState('https://github.com');
+  const [draft, setDraft] = useState(DEFAULT_URL);
+  const [submitted, setSubmitted] = useState(DEFAULT_URL);
   const [showUrl, setShowUrl] = useState(true);
   const [hideImage, setHideImage] = useState(false);
   const [titleLines, setTitleLines] = useState(2);
