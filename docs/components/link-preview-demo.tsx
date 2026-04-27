@@ -11,8 +11,8 @@ import {
 import {
   SiExpo,
   SiGithub,
-  SiNpm,
   SiReact,
+  SiReddit,
   SiYcombinator,
   SiYoutube,
 } from '@icons-pack/react-simple-icons';
@@ -26,9 +26,9 @@ const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
   { label: 'GitHub', url: 'https://github.com/azizbecha', icon: SiGithub },
   { label: 'Expo', url: 'https://github.com/expo/expo', icon: SiExpo },
   {
-    label: 'npm',
-    url: 'https://www.npmjs.com/package/react-native-preview-url',
-    icon: SiNpm,
+    label: 'r/reactnative',
+    url: 'https://www.reddit.com/r/reactnative/',
+    icon: SiReddit,
   },
   {
     label: 'React Native',
