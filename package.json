@@ -8,7 +8,7 @@
     "format:check": "oxfmt --check .",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
-    "prepare": "pnpm --filter react-native-preview-url prepare",
+    "build": "pnpm --filter react-native-preview-url prepare",
     "example": "pnpm --filter react-native-preview-url-example"
   },
   "devDependencies": {
