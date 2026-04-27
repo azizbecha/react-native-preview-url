@@ -62,6 +62,19 @@ export const LinkPreview: React.FC<Props> = ({
   const [imageError, setImageError] = useState<boolean>(false);
   const activeImageUriRef = useRef<string | undefined>(undefined);
 
+  // Read latest callbacks via refs so the success/error effects below can
+  // depend only on `data`/`error`. Without this, an inline arrow at the call
+  // site (which gets a fresh reference every render) would re-fire the effect
+  // each render, and for an `error` that persists, drive an infinite loop.
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+  });
+  useEffect(() => {
+    onErrorRef.current = onError;
+  });
+
   const candidateImageUri = data?.images?.[0]?.url;
   const imageUri = !imageError ? candidateImageUri : undefined;
   activeImageUriRef.current = candidateImageUri;
@@ -72,15 +85,15 @@ export const LinkPreview: React.FC<Props> = ({
 
   useEffect(() => {
     if (data) {
-      onSuccess?.(data);
+      onSuccessRef.current?.(data);
     }
-  }, [data, onSuccess]);
+  }, [data]);
 
   useEffect(() => {
     if (error) {
-      onError?.(error);
+      onErrorRef.current?.(error);
     }
-  }, [error, onError]);
+  }, [error]);
 
   if (loading) {
     return <>{loaderComponent || <LoaderComponent />}</>;
