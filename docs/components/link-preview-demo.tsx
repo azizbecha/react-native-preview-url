@@ -30,14 +30,14 @@ const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
     icon: SiReact,
   },
   {
-    label: 'RN Directory',
-    url: 'https://reactnative.directory',
-    icon: SiReact,
-  },
-  {
     label: 'YouTube',
     url: 'https://www.youtube.com/watch?v=Pi_XhK03fTA',
     icon: SiYoutube,
+  },
+  {
+    label: 'RN Directory',
+    url: 'https://reactnative.directory',
+    icon: SiReact,
   },
   {
     label: 'Wikipedia',
