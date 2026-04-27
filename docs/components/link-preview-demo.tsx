@@ -86,7 +86,7 @@ export function LinkPreviewDemo() {
   );
 
   return (
-    <div className="not-prose grid gap-10 lg:grid-cols-2 lg:gap-12">
+    <div className="@container not-prose grid gap-10 @3xl:grid-cols-2 @3xl:gap-12">
       <div className="flex">
         <PreviewCanvas>
           <LinkPreview
