@@ -9,11 +9,11 @@ import {
   type SVGProps,
 } from 'react';
 import {
+  SiExpo,
   SiGithub,
   SiNpm,
   SiReact,
-  SiStripe,
-  SiVercel,
+  SiYcombinator,
   SiYoutube,
 } from '@icons-pack/react-simple-icons';
 import { LinkPreview } from 'react-native-preview-url';
@@ -23,8 +23,8 @@ type IconComponent = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>;
 const DEFAULT_URL = 'https://github.com/azizbecha/react-native-preview-url';
 
 const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
-  { label: 'GitHub', url: 'https://github.com', icon: SiGithub },
-  { label: 'Vercel', url: 'https://vercel.com', icon: SiVercel },
+  { label: 'GitHub', url: 'https://github.com/azizbecha', icon: SiGithub },
+  { label: 'Expo', url: 'https://expo.dev', icon: SiExpo },
   {
     label: 'npm',
     url: 'https://www.npmjs.com/package/react-native-preview-url',
@@ -36,7 +36,11 @@ const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
     icon: SiReact,
   },
   { label: 'YouTube', url: 'https://youtube.com', icon: SiYoutube },
-  { label: 'Stripe', url: 'https://stripe.com', icon: SiStripe },
+  {
+    label: 'Hacker News',
+    url: 'https://news.ycombinator.com',
+    icon: SiYcombinator,
+  },
 ];
 
 export function LinkPreviewDemo() {
