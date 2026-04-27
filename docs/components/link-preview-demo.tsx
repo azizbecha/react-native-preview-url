@@ -10,7 +10,7 @@ import {
 } from 'react';
 import {
   SiGithub,
-  SiLinear,
+  SiNpm,
   SiReact,
   SiStripe,
   SiVercel,
@@ -25,7 +25,11 @@ const DEFAULT_URL = 'https://github.com/azizbecha/react-native-preview-url';
 const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
   { label: 'GitHub', url: 'https://github.com', icon: SiGithub },
   { label: 'Vercel', url: 'https://vercel.com', icon: SiVercel },
-  { label: 'Linear', url: 'https://linear.app', icon: SiLinear },
+  {
+    label: 'npm',
+    url: 'https://www.npmjs.com/package/react-native-preview-url',
+    icon: SiNpm,
+  },
   {
     label: 'React Native',
     url: 'https://github.com/facebook/react-native',
