@@ -1,0 +1,157 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+@source '../node_modules/fumadocs-ui/dist/**/*.js';
+
+/* ─── Landing-page custom theme tokens & keyframes ──────────────────── */
+
+@theme {
+  --animate-marquee-left: marquee-left var(--duration, 40s) linear infinite;
+  --animate-marquee-right: marquee-right var(--duration, 40s) linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-float-slower: float 12s ease-in-out infinite;
+  --animate-aurora: aurora 16s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 2.4s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  --animate-grid-fade: grid-fade 12s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - var(--gap, 1.5rem)));
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(calc(-100% - var(--gap, 1.5rem)));
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translateY(-12px) rotate(var(--r, 0deg));
+  }
+}
+
+@keyframes aurora {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.7;
+  }
+  33% {
+    transform: translate3d(8%, -6%, 0) scale(1.1);
+    opacity: 0.9;
+  }
+  66% {
+    transform: translate3d(-6%, 4%, 0) scale(0.95);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0
+      color-mix(in srgb, var(--color-fd-primary) 50%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px
+      color-mix(in srgb, var(--color-fd-primary) 0%, transparent);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes grid-fade {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ─── Decorative grid background used in the hero ───────────────────── */
+
+.bg-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-fd-foreground) 6%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-fd-foreground) 6%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 48px 48px;
+  mask-image: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    #000 40%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    #000 40%,
+    transparent 100%
+  );
+}
+
+/* Animated gradient text — used for the hero title */
+.text-gradient-animated {
+  background: linear-gradient(
+    110deg,
+    var(--color-fd-foreground) 0%,
+    color-mix(in srgb, var(--color-fd-primary) 80%, var(--color-fd-foreground))
+      35%,
+    var(--color-fd-foreground) 70%,
+    color-mix(in srgb, var(--color-fd-primary) 80%, var(--color-fd-foreground))
+      100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-gradient-animated {
+    animation: none;
+  }
+}

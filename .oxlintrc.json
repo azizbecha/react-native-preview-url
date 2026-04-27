@@ -55,10 +55,11 @@
   },
   "ignorePatterns": [
     "node_modules/",
-    "lib/",
+    "packages/*/lib/",
     "coverage/",
-    ".yarn/",
-    "example/dist/"
+    "example/dist/",
+    "docs/.next/",
+    "docs/.source/"
   ],
   "rules": {
     "no-cond-assign": "warn",

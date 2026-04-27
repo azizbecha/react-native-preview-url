@@ -1,0 +1,175 @@
+---
+title: <LinkPreview />
+description: The drop-in component. Props, styling, accessibility, edge cases.
+---
+
+The `LinkPreview` component fetches metadata for a URL and renders a card
+with the title, description, image, and domain. It handles loading, errors,
+and tap-to-open out of the box.
+
+## Try it
+
+<LinkPreviewDemo />
+
+## Basic usage
+
+```tsx
+import { LinkPreview } from 'react-native-preview-url';
+
+<LinkPreview url="https://github.com" />;
+```
+
+When `url` is empty or not a valid `http(s)` URL the component renders nothing
+and reports the error via `onError` (if provided).
+
+## Props
+
+The component takes 18 props. They group into four roles: identifying the
+target, hooking into lifecycle events, controlling layout, and styling.
+
+### Required
+
+| Prop  | Type     | Description         |
+| ----- | -------- | ------------------- |
+| `url` | `string` | The URL to preview. |
+
+### Behavior
+
+| Prop        | Type                                  | Default | Description                                                                         |
+| ----------- | ------------------------------------- | ------- | ----------------------------------------------------------------------------------- |
+| `timeout`   | `number`                              | `3000`  | Request timeout in ms. Clamped to `[1000, 30000]`.                                  |
+| `onSuccess` | `(data: LinkPreviewResponse) => void` | —       | Fires when metadata is fetched.                                                     |
+| `onError`   | `(error: string) => void`             | —       | Fires on any failure (invalid URL, network, server error, timeout).                 |
+| `onPress`   | `(data: LinkPreviewResponse) => void` | —       | Override the default tap behavior. Without this prop, taps call `Linking.openURL`.  |
+| `visible`   | `boolean`                             | `true`  | When `false`, the resolved card is unmounted (the loader still shows during fetch). |
+
+### Layout
+
+| Prop               | Type                  | Default  | Description                                                         |
+| ------------------ | --------------------- | -------- | ------------------------------------------------------------------- |
+| `titleLines`       | `number`              | `2`      | `numberOfLines` for the title.                                      |
+| `descriptionLines` | `number`              | `4`      | `numberOfLines` for the description.                                |
+| `showUrl`          | `boolean`             | `true`   | Whether to render the domain line below the description.            |
+| `hideImage`        | `boolean`             | `false`  | Skip the image entirely. Useful in dense lists.                     |
+| `loaderComponent`  | `React.ReactNode`     | skeleton | Element shown while loading. Replaces the built-in shimmer.         |
+| `fallbackImage`    | `ImageSourcePropType` | —        | Image used when the page has no image _or_ the image fails to load. |
+
+### Style overrides
+
+| Prop               | Type         | Description                        |
+| ------------------ | ------------ | ---------------------------------- |
+| `containerStyle`   | `ViewStyle`  | Style merged onto the outer card.  |
+| `imageStyle`       | `ImageStyle` | Style merged onto the image.       |
+| `titleStyle`       | `TextStyle`  | Style merged onto the title.       |
+| `descriptionStyle` | `TextStyle`  | Style merged onto the description. |
+| `urlStyle`         | `TextStyle`  | Style merged onto the domain text. |
+
+## Recipes
+
+Real patterns for the common cases.
+
+### Custom press behavior
+
+By default a tap calls `Linking.openURL(data.url)`. Override it for analytics,
+in-app browsers, or routing:
+
+```tsx
+<LinkPreview
+  url="https://github.com"
+  onPress={(data) => {
+    track('link_preview_tap', { url: data.url, site: data.siteName });
+    openInAppBrowser(data.url);
+  }}
+/>
+```
+
+### Custom loader
+
+Pass any element as `loaderComponent` to replace the built-in skeleton:
+
+```tsx
+import { ActivityIndicator } from 'react-native';
+
+<LinkPreview
+  url="https://github.com"
+  loaderComponent={<ActivityIndicator size="small" />}
+/>;
+```
+
+The built-in loader is a shimmer skeleton sized to roughly match the resolved
+card. If you keep it, your layout won't jump when the data arrives.
+
+### Fallback image
+
+Some pages have no Open Graph image, or return one that fails to decode on the
+client. Pass `fallbackImage` to keep the visual slot filled either way:
+
+```tsx
+<LinkPreview
+  url="https://example.com"
+  fallbackImage={require('./assets/link-fallback.png')}
+/>
+```
+
+If `hideImage` is `true`, the image slot is skipped entirely and `fallbackImage`
+is ignored.
+
+### Branded styling
+
+The component is opinionated about layout (rounded card, 16:9 default image,
+shadow on iOS, elevation on Android, hairline border) but every visual is
+overridable.
+
+```tsx
+<LinkPreview
+  url="https://github.com"
+  containerStyle={{
+    margin: 16,
+    borderRadius: 16,
+    backgroundColor: '#fff',
+    borderColor: '#e5e7eb',
+  }}
+  imageStyle={{ borderRadius: 12, height: 200 }}
+  titleStyle={{ fontSize: 18, fontWeight: '700' }}
+  descriptionStyle={{ fontSize: 14, color: '#4b5563' }}
+  urlStyle={{ fontSize: 12, color: '#9ca3af' }}
+/>
+```
+
+When the API returns image dimensions, the component uses the _real_ aspect
+ratio instead of the 16:9 default. Pass `imageStyle={{ height }}` if you want
+a fixed height regardless of source dimensions.
+
+## Edge cases
+
+### Visibility
+
+`visible={false}` unmounts the resolved card, but the loader still renders
+during the network fetch. If you want to gate the _fetch itself_, conditionally
+render the component:
+
+```tsx
+{
+  shouldShowPreview && <LinkPreview url={url} />;
+}
+```
+
+### Empty / invalid URL
+
+When `url` is empty or fails the `http(s)` regex check, no network call is
+made — the component returns `null` and fires `onError` synchronously. This
+also means no cache entry is created for invalid input, so you can clear the
+URL state and retype without waiting out an error TTL.
+
+### Image failures
+
+If the page's first image URL fails to decode, the component falls back to
+`fallbackImage` (if provided). If you want to retry the original, change the
+URL — the image error state resets every time `url` changes.
+
+## Accessibility
+
+The card declares `accessibilityRole="link"`, an `accessibilityLabel` built
+from the title and description, and an `accessibilityHint` that announces the
+target domain. The image slot gets its own descriptive label. The loader
+declares `accessibilityRole="progressbar"` with `busy: true`.

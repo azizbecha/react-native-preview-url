@@ -8,11 +8,12 @@
   "printWidth": 80,
   "sortPackageJson": false,
   "ignorePatterns": [
-    "yarn.lock",
-    ".yarn/",
-    "lib/",
+    "pnpm-lock.yaml",
+    "packages/*/lib/",
     "coverage/",
     "node_modules/",
-    "example/dist/"
+    "example/dist/",
+    "docs/.next/",
+    "docs/.source/"
   ]
 }

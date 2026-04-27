@@ -1,0 +1,74 @@
+---
+title: Introduction
+description: Rich URL link previews for React Native — a tiny component, a hook, and a free hosted API.
+---
+
+`react-native-preview-url` turns any URL into a link preview card — title,
+description, image, favicon, site name — using one component or one hook.
+
+## What it ships
+
+<Cards>
+  <Card
+    title="<LinkPreview />"
+    href="/docs/link-preview"
+    description="Drop-in card with rounded corners, 16:9 image, accessible press-to-open behavior. Override every visual via *Style props."
+  />
+  <Card
+    title="useUrlPreview"
+    href="/docs/use-url-preview"
+    description="The lower-level hook. Returns { loading, data, error }. Render whatever shape your design system needs."
+  />
+  <Card
+    title="In-memory cache"
+    href="/docs/caching"
+    description="LRU with separate TTLs for success/error. Concurrent requests dedupe automatically. Scoped by base URL."
+  />
+  <Card
+    title="Free hosted API"
+    href="/docs/self-hosting"
+    description="No API key. Or run the open-source backend yourself when you outgrow the free tier."
+  />
+</Cards>
+
+## Try it
+
+<LinkPreviewDemo />
+
+## At a glance
+
+```tsx
+import { LinkPreview } from 'react-native-preview-url';
+
+export function Example() {
+  return <LinkPreview url="https://github.com" />;
+}
+```
+
+That's it. The card renders, the URL opens on tap (via React Native's
+`Linking`), the response is cached for five minutes.
+
+## Where to go next
+
+<Cards>
+  <Card
+    title="Installation"
+    href="/docs/installation"
+    description="One install, zero native steps."
+  />
+  <Card
+    title="Component reference"
+    href="/docs/link-preview"
+    description="All 18 props, with the actual defaults."
+  />
+  <Card
+    title="Hook reference"
+    href="/docs/use-url-preview"
+    description="Bring your own UI."
+  />
+  <Card
+    title="API reference"
+    href="/docs/api-reference"
+    description="Types, exports, the HTTP contract."
+  />
+</Cards>

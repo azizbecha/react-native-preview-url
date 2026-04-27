@@ -9,7 +9,9 @@
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "build": "pnpm --filter react-native-preview-url prepare",
-    "example": "pnpm --filter react-native-preview-url-example"
+    "example": "pnpm --filter react-native-preview-url-example",
+    "docs:dev": "pnpm --filter react-native-preview-url-docs dev",
+    "docs:build": "pnpm --filter react-native-preview-url-docs build"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.6.0",
@@ -21,7 +23,8 @@
   },
   "workspaces": [
     "packages/*",
-    "example"
+    "example",
+    "docs"
   ],
   "packageManager": "pnpm@10.4.1",
   "engines": {

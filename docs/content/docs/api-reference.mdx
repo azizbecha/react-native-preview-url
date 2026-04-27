@@ -1,0 +1,145 @@
+---
+title: API reference
+description: Every export, every type, the HTTP contract.
+---
+
+## Exports
+
+```ts
+import {
+  LinkPreview, // React component (also default export)
+  useUrlPreview, // React hook
+  setBaseUrl, // configure the backend
+  configureCache, // configure the in-memory cache
+  clearCache, // wipe all entries
+  invalidateUrl, // drop one entry
+  type CacheOptions,
+} from 'react-native-preview-url';
+```
+
+## Component & hook
+
+### `LinkPreview`
+
+See [the component reference](/docs/link-preview) for the full prop surface.
+
+### `useUrlPreview`
+
+See [the hook reference](/docs/use-url-preview) for return values and
+behavior.
+
+## Configuration
+
+### `setBaseUrl(url)`
+
+```ts
+function setBaseUrl(url: string): void;
+```
+
+Override the backend. Defaults to
+`https://azizbecha-link-preview-api.vercel.app`. Trailing slashes are
+stripped. Throws `TypeError` if `url` is not a valid `http(s)` URL.
+
+```tsx
+import { setBaseUrl } from 'react-native-preview-url';
+
+if (__DEV__) {
+  setBaseUrl('http://localhost:3000');
+} else {
+  setBaseUrl('https://link-preview.your-domain.com');
+}
+```
+
+<Callout>
+  Calling `setBaseUrl` does *not* clear existing cache entries. Cache keys are
+  scoped by the active base URL, so old entries become unreachable but persist
+  in the LRU until evicted. Call `clearCache()` after `setBaseUrl` if you want
+  an immediate clean slate.
+</Callout>
+
+### `configureCache`, `clearCache`, `invalidateUrl`
+
+See [Caching](/docs/caching).
+
+## Types
+
+The library does not re-export the response types — they're inferred at the
+call site. The shapes are:
+
+### `LinkPreviewResponse`
+
+```ts
+interface LinkPreviewResponse {
+  title?: string;
+  description?: string;
+  url: string; // canonical URL the server resolved to
+  images?: PreviewImage[];
+  favicons?: string[];
+  mediaType?: string; // og:type
+  contentType?: string; // HTTP Content-Type
+  siteName?: string; // og:site_name
+}
+```
+
+`url` is the only required field. Everything else may be missing depending on
+what the target page exposes. Don't rely on `title` or `description` being
+defined — guard your renders.
+
+### `PreviewImage`
+
+```ts
+interface PreviewImage {
+  url: string;
+  width?: number;
+  height?: number;
+}
+```
+
+When `width` and `height` are present, `<LinkPreview />` uses the natural
+aspect ratio instead of its 16:9 default.
+
+### `CacheOptions`
+
+See [`CacheOptions`](/docs/caching#cacheoptions) under Caching.
+
+## Constants
+
+| Constant          | Value                                           | Source                            |
+| ----------------- | ----------------------------------------------- | --------------------------------- |
+| Default base URL  | `https://azizbecha-link-preview-api.vercel.app` | the hosted free API               |
+| `DEFAULT_TIMEOUT` | `3000` ms                                       | applied when `timeout` is omitted |
+| `MIN_TIMEOUT`     | `1000` ms                                       | floor used by `clamp`             |
+| `MAX_TIMEOUT`     | `30000` ms                                      | ceiling used by `clamp`           |
+
+The `*_TIMEOUT` constants are not exported — they're applied internally to
+clamp whatever you pass. If you ask for `timeout={50}`, you get `1000`. If
+you ask for `timeout={120000}`, you get `30000`.
+
+## HTTP contract
+
+The hook (and therefore the component) talks to a single endpoint:
+
+```
+GET ${baseUrl}/get?url=${encodeURIComponent(url)}&timeout=${timeout}
+```
+
+### Success
+
+A successful response is `200 OK` with a `LinkPreviewResponse` JSON body.
+
+### Failure
+
+Failures return non-2xx with either:
+
+- A JSON body `{ "error": "human-readable message" }` — used as the error.
+- No JSON body — the client falls back to `Error <status>` (e.g.
+  `Error 502`).
+
+### Timeout
+
+The client wraps the request in an `AbortController` with a timer set to
+`timeout + 500ms`. If the timer fires first, the error becomes
+`Request timed out` and is _not_ cached.
+
+For the reference implementation of the server, see
+[Self-hosting](/docs/self-hosting).

@@ -1,0 +1,115 @@
+---
+title: Installation
+description: Install the package and render your first preview.
+---
+
+<Steps>
+
+<Step>
+
+### Install the package
+
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+
+<Tab value="npm">
+
+```bash
+npm install react-native-preview-url
+```
+
+</Tab>
+
+<Tab value="pnpm">
+
+```bash
+pnpm add react-native-preview-url
+```
+
+</Tab>
+
+<Tab value="yarn">
+
+```bash
+yarn add react-native-preview-url
+```
+
+</Tab>
+
+<Tab value="bun">
+
+```bash
+bun add react-native-preview-url
+```
+
+</Tab>
+
+</Tabs>
+
+</Step>
+
+<Step>
+
+### Confirm peer deps
+
+`react-native-preview-url` declares `react` and `react-native` as peer
+dependencies — your app provides them. No native code, no autolinking step,
+no Metro config changes.
+
+<Callout type="info">
+  Works on React Native (iOS + Android), Expo (managed and bare), and React
+  Native Web. Same component, no platform branches.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Render your first card
+
+Drop it anywhere a `View` would go:
+
+```tsx title="App.tsx"
+import { SafeAreaView } from 'react-native';
+import { LinkPreview } from 'react-native-preview-url';
+
+export default function App() {
+  return (
+    <SafeAreaView style={{ flex: 1, padding: 16 }}>
+      <LinkPreview url="https://github.com" />
+    </SafeAreaView>
+  );
+}
+```
+
+The first render fires a network request, shows the built-in skeleton loader,
+then swaps in the card. Tap the card and the URL opens in the user's browser.
+
+</Step>
+
+</Steps>
+
+## Live preview
+
+The same component, running in this page via `react-native-web`:
+
+<LinkPreviewDemo />
+
+## Where to next
+
+<Cards>
+  <Card
+    title="Customize the component"
+    href="/docs/link-preview"
+    description="Props, styling, custom press, fallback image, accessibility."
+  />
+  <Card
+    title="Bring your own UI"
+    href="/docs/use-url-preview"
+    description="Drop the component, use the hook, render whatever shape."
+  />
+  <Card
+    title="Tune the cache"
+    href="/docs/caching"
+    description="For tests, memory-constrained apps, pull-to-refresh flows."
+  />
+</Cards>

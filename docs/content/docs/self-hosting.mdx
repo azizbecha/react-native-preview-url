@@ -1,0 +1,92 @@
+---
+title: Self-hosting
+description: Run your own backend instead of the free hosted API.
+---
+
+The library defaults to the hosted free API at
+`https://azizbecha-link-preview-api.vercel.app`. There's no API key, no rate
+limit per user, no signup. For most apps that's all you need.
+
+You might want to host the backend yourself if:
+
+- You want hard guarantees on uptime and latency.
+- You're building a paid product and don't want to depend on a free service.
+- You're serving content behind a corporate network that the public API
+  can't reach.
+- You want to add custom rules — caching headers, allowlist of domains,
+  custom Open Graph extraction logic.
+
+## The reference server
+
+The reference backend is open source and lives at
+[`azizbecha/link-preview-api`](https://github.com/azizbecha/link-preview-api).
+It's a single endpoint that mirrors the contract documented in the
+[API reference](/docs/api-reference#http-contract).
+
+Deploy it to Vercel, Render, Fly, your own VPS — wherever you'd run any
+small Node service.
+
+## Pointing the library at your server
+
+Once your backend is up, call `setBaseUrl` once at app startup before any
+component or hook renders:
+
+```tsx title="App.tsx"
+import { setBaseUrl } from 'react-native-preview-url';
+
+setBaseUrl('https://link-preview.your-domain.com');
+
+// ...your app
+```
+
+`setBaseUrl` strips trailing slashes and validates the URL — it throws if you
+pass anything that isn't `http://` or `https://`.
+
+## Per-environment base URLs
+
+Branch on `__DEV__` (or your own env flag) to swap backends per build:
+
+```tsx
+import { setBaseUrl } from 'react-native-preview-url';
+
+setBaseUrl(
+  __DEV__ ? 'http://localhost:3000' : 'https://link-preview.your-domain.com'
+);
+```
+
+Cache entries are scoped by the active base URL, so switching mid-session
+doesn't poison the cache — entries written under one base URL won't surface
+when reading under another.
+
+## Writing your own server
+
+If you'd rather not run the reference server, any HTTP service that
+implements the contract works. The shortest possible compliant server, in
+TypeScript:
+
+```ts
+import { extractMetadata } from 'your-favorite-og-parser';
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const target = searchParams.get('url');
+  const timeoutMs = Number(searchParams.get('timeout') ?? 3000);
+
+  if (!target) {
+    return Response.json(
+      { error: 'url query param is required' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const meta = await extractMetadata(target, { timeout: timeoutMs });
+    return Response.json(meta); // shape: LinkPreviewResponse
+  } catch (err) {
+    return Response.json({ error: String(err) }, { status: 502 });
+  }
+}
+```
+
+The client expects a JSON `error` field on non-2xx responses — if you skip
+it, errors surface as `Error <status>` instead of your message.
