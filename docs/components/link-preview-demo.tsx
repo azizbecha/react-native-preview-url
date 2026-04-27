@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  useCallback,
   useId,
   useState,
   type ComponentType,
@@ -72,6 +73,18 @@ export function LinkPreviewDemo() {
     setEvent(null);
   }
 
+  // Stable refs — LinkPreview's internal useEffect lists onError/onSuccess in
+  // its deps and calls them on every change; an inline arrow would re-fire the
+  // effect each render and (for errors that persist) loop forever.
+  const handlePress = useCallback(
+    (data: { url: string }) => setEvent({ type: 'press', detail: data.url }),
+    []
+  );
+  const handleError = useCallback(
+    (err: string) => setEvent({ type: 'error', detail: err }),
+    []
+  );
+
   return (
     <div className="not-prose grid gap-10 lg:grid-cols-2 lg:gap-12">
       <div className="flex">
@@ -91,8 +104,8 @@ export function LinkPreviewDemo() {
             titleStyle={{ color: 'var(--color-fd-foreground)' }}
             descriptionStyle={{ color: 'var(--color-fd-muted-foreground)' }}
             urlStyle={{ color: 'var(--color-fd-muted-foreground)' }}
-            onPress={(data) => setEvent({ type: 'press', detail: data.url })}
-            onError={(err) => setEvent({ type: 'error', detail: err })}
+            onPress={handlePress}
+            onError={handleError}
           />
         </PreviewCanvas>
       </div>
