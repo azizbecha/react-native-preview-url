@@ -12,6 +12,7 @@ import {
   SiGithub,
   SiReact,
   SiVercel,
+  SiWikipedia,
   SiYoutube,
 } from '@icons-pack/react-simple-icons';
 import { LinkPreview } from 'react-native-preview-url';
@@ -29,14 +30,19 @@ const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
     icon: SiReact,
   },
   {
-    label: 'RN Paper',
-    url: 'https://github.com/callstack/react-native-paper',
+    label: 'RN Directory',
+    url: 'https://reactnative.directory',
     icon: SiReact,
   },
   {
     label: 'YouTube',
     url: 'https://www.youtube.com/watch?v=Pi_XhK03fTA',
     icon: SiYoutube,
+  },
+  {
+    label: 'Wikipedia',
+    url: 'https://en.wikipedia.org/wiki/React_Native',
+    icon: SiWikipedia,
   },
 ];
 
