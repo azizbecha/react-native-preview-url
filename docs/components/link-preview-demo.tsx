@@ -9,11 +9,9 @@ import {
   type SVGProps,
 } from 'react';
 import {
-  SiExpo,
   SiGithub,
   SiReact,
-  SiReddit,
-  SiYcombinator,
+  SiVercel,
   SiYoutube,
 } from '@icons-pack/react-simple-icons';
 import { LinkPreview } from 'react-native-preview-url';
@@ -23,23 +21,22 @@ type IconComponent = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>;
 const DEFAULT_URL = 'https://github.com/azizbecha/react-native-preview-url';
 
 const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
-  { label: 'GitHub', url: 'https://github.com/azizbecha', icon: SiGithub },
-  { label: 'Expo', url: 'https://github.com/expo/expo', icon: SiExpo },
-  {
-    label: 'r/reactnative',
-    url: 'https://www.reddit.com/r/reactnative/',
-    icon: SiReddit,
-  },
+  { label: 'GitHub', url: DEFAULT_URL, icon: SiGithub },
+  { label: 'Vercel', url: 'https://github.com/vercel/vercel', icon: SiVercel },
   {
     label: 'React Native',
-    url: 'https://github.com/facebook/react-native',
+    url: 'https://reactnative.dev',
     icon: SiReact,
   },
-  { label: 'YouTube', url: 'https://youtube.com', icon: SiYoutube },
   {
-    label: 'Hacker News',
-    url: 'https://news.ycombinator.com',
-    icon: SiYcombinator,
+    label: 'RN Paper',
+    url: 'https://github.com/callstack/react-native-paper',
+    icon: SiReact,
+  },
+  {
+    label: 'YouTube',
+    url: 'https://www.youtube.com/watch?v=Pi_XhK03fTA',
+    icon: SiYoutube,
   },
 ];
 
