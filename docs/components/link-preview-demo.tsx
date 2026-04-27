@@ -24,7 +24,7 @@ const DEFAULT_URL = 'https://github.com/azizbecha/react-native-preview-url';
 
 const PRESETS: Array<{ label: string; url: string; icon: IconComponent }> = [
   { label: 'GitHub', url: 'https://github.com/azizbecha', icon: SiGithub },
-  { label: 'Expo', url: 'https://expo.dev', icon: SiExpo },
+  { label: 'Expo', url: 'https://github.com/expo/expo', icon: SiExpo },
   {
     label: 'npm',
     url: 'https://www.npmjs.com/package/react-native-preview-url',
