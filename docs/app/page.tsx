@@ -54,7 +54,7 @@ const STATS = [
   { value: '18', label: 'props' },
   { value: '0', label: 'native deps' },
   { value: '~17 kB', label: 'tarball' },
-  { value: '90/90', label: 'tests' },
+  { value: '3', label: 'platforms' },
 ];
 
 export default function HomePage() {
