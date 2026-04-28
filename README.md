@@ -1,5 +1,14 @@
 # react-native-preview-url
 
+<p align="center">
+  <a href="https://www.npmjs.com/package/react-native-preview-url"><img alt="npm version" src="https://img.shields.io/npm/v/react-native-preview-url?color=cb3837&label=npm&logo=npm&logoColor=white"></a>
+  <a href="https://www.npmjs.com/package/react-native-preview-url"><img alt="monthly downloads" src="https://img.shields.io/npm/dm/react-native-preview-url?color=cb3837&label=downloads&logo=npm&logoColor=white"></a>
+  <a href="https://github.com/azizbecha/react-native-preview-url/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/azizbecha/react-native-preview-url/actions/workflows/ci.yml/badge.svg?branch=main"></a>
+  <a href="https://bundlephobia.com/package/react-native-preview-url"><img alt="bundle size (min+gzip)" src="https://img.shields.io/bundlephobia/minzip/react-native-preview-url?label=min%2Bgzip"></a>
+  <a href="https://www.npmjs.com/package/react-native-preview-url"><img alt="TypeScript types" src="https://img.shields.io/npm/types/react-native-preview-url?color=3178c6&logo=typescript&logoColor=white"></a>
+  <a href="https://github.com/azizbecha/react-native-preview-url/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/npm/l/react-native-preview-url?color=blue"></a>
+</p>
+
 A React Native library for rich URL link previews — fetch metadata (title, description, image, favicon) and render polished cards with one component or one hook. Works on iOS, Android, and React Native Web.
 
 ```bash
