@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  getBaseUrl,
-  DEFAULT_TIMEOUT,
-  MAX_TIMEOUT,
-  MIN_TIMEOUT,
-} from './constants';
-import { clamp } from './utils/clamp';
+import { getBaseUrl, DEFAULT_TIMEOUT } from './constants';
 import type { LinkPreviewResponse } from './types';
 import { isValidHttpUrl } from './utils/isValidHttpUrl';
 import {
@@ -18,6 +12,7 @@ import {
   clearInFlight,
 } from './cache';
 import { validateLinkPreviewResponse } from './validateLinkPreviewResponse';
+import { normalizeTimeout } from './normalizeTimeout';
 
 const TIMEOUT_ERROR_MESSAGE = 'Request timed out';
 const TIMEOUT_BUFFER_MS = 500;
@@ -64,7 +59,7 @@ export const useUrlPreview = (
     }
 
     let cancelled = false;
-    const finalTimeout = clamp(timeout, MIN_TIMEOUT, MAX_TIMEOUT);
+    const finalTimeout = normalizeTimeout(timeout);
 
     const ensureInFlight = (): Promise<LinkPreviewResponse> => {
       const existing = getInFlight(url, baseUrl);

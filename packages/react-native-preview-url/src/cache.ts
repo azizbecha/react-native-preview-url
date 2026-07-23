@@ -24,14 +24,46 @@ let enabled = true;
 let entries = new Map<string, CacheEntry>();
 let inFlight = new Map<string, Promise<LinkPreviewResponse>>();
 
+const requireFiniteNonNegative = (value: number, name: string): number => {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new RangeError(`${name} must be a finite non-negative number`);
+  }
+  return value;
+};
+
+const requireMaxSize = (value: number): number => {
+  if (!Number.isSafeInteger(value) || value < 0) {
+    throw new RangeError('maxSize must be a non-negative safe integer');
+  }
+  return value;
+};
+
 const makeKey = (url: string, baseUrl = getBaseUrl()): string =>
   `${baseUrl}::${url}`;
 
 export const configureCache = (options: CacheOptions): void => {
-  if (options.maxSize !== undefined) maxSize = options.maxSize;
-  if (options.ttl !== undefined) ttl = options.ttl;
-  if (options.errorTtl !== undefined) errorTtl = options.errorTtl;
-  if (options.enabled !== undefined) enabled = options.enabled;
+  if (!options || typeof options !== 'object' || Array.isArray(options)) {
+    throw new TypeError('configureCache expects an options object');
+  }
+
+  const nextMaxSize =
+    options.maxSize === undefined ? maxSize : requireMaxSize(options.maxSize);
+  const nextTtl =
+    options.ttl === undefined ? ttl : requireFiniteNonNegative(options.ttl, 'ttl');
+  const nextErrorTtl =
+    options.errorTtl === undefined
+      ? errorTtl
+      : requireFiniteNonNegative(options.errorTtl, 'errorTtl');
+  const nextEnabled = options.enabled === undefined ? enabled : options.enabled;
+
+  if (typeof nextEnabled !== 'boolean') {
+    throw new TypeError('enabled must be a boolean');
+  }
+
+  maxSize = nextMaxSize;
+  ttl = nextTtl;
+  errorTtl = nextErrorTtl;
+  enabled = nextEnabled;
   entries = new Map();
   inFlight = new Map();
 };

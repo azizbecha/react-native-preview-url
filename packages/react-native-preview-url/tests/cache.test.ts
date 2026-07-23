@@ -258,4 +258,21 @@ describe('cache', () => {
       expect(getInFlight('a')).toBeUndefined();
     });
   });
+
+  describe('configuration validation', () => {
+    it.each([
+      ['maxSize', { maxSize: -1 }],
+      ['maxSize', { maxSize: 1.5 }],
+      ['ttl', { ttl: Number.NaN }],
+      ['errorTtl', { errorTtl: -1 }],
+    ])('rejects an invalid %s value', (_name, options) => {
+      expect(() => configureCache(options)).toThrow();
+    });
+
+    it('rejects non-boolean enabled values', () => {
+      expect(() => configureCache({ enabled: 'true' as never })).toThrow(
+        'enabled must be a boolean'
+      );
+    });
+  });
 });
