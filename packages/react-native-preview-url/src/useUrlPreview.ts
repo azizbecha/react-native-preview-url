@@ -65,6 +65,13 @@ const getRequestHeaders = (
   return result;
 };
 
+const getHeadersKey = (headers: HeadersInit | undefined): string =>
+  JSON.stringify(
+    Object.entries(getRequestHeaders(headers)).sort(([left], [right]) =>
+      left.localeCompare(right)
+    )
+  );
+
 export const useUrlPreview = (
   url: string,
   argument: UseUrlPreviewArgument = DEFAULT_TIMEOUT
@@ -81,6 +88,7 @@ export const useUrlPreview = (
   }
   const retryCount = getRetryCount(options.retry);
   const requestFetcher = options.fetcher ?? fetch;
+  const headersKey = getHeadersKey(options.headers);
   const refresh = useCallback(() => {
     invalidateUrl(url, getBaseUrl());
     setRefreshVersion((version) => version + 1);
@@ -244,8 +252,7 @@ export const useUrlPreview = (
     requestEnabled,
     retryCount,
     requestFetcher,
-    options.fetcher,
-    options.headers,
+    headersKey,
     options.signal,
     refreshVersion,
   ]);
