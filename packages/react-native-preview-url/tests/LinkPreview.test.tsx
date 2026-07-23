@@ -186,6 +186,29 @@ describe('LinkPreview component', () => {
     expect(linkingMock).toHaveBeenCalledWith('https://example.com/page');
   });
 
+  it('reports a failed default navigation without rejecting', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => okFetch(richResponse))
+    );
+    const navigationError = new Error('Cannot open URL');
+    const onPressError = vi.fn();
+    const linkingMock = Linking.openURL as unknown as ReturnType<typeof vi.fn>;
+    linkingMock.mockRejectedValueOnce(navigationError);
+
+    render(
+      <LinkPreview
+        url="https://example.com/page"
+        onPressError={onPressError}
+      />
+    );
+
+    await waitFor(() => screen.getByTestId('rn-touchable'));
+    fireEvent.click(screen.getByTestId('rn-touchable'));
+
+    await waitFor(() => expect(onPressError).toHaveBeenCalledWith(navigationError));
+  });
+
   it('falls back to fallbackImage source when the image errors', async () => {
     vi.stubGlobal(
       'fetch',

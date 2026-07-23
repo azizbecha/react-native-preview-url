@@ -25,6 +25,7 @@ interface Props {
   onError?: (error: string) => void;
   onSuccess?: (data: LinkPreviewResponse) => void;
   onPress?: (data: LinkPreviewResponse) => void;
+  onPressError?: (error: Error) => void;
   titleLines?: number;
   descriptionLines?: number;
   containerStyle?: ViewStyle;
@@ -45,6 +46,7 @@ export const LinkPreview: React.FC<Props> = ({
   onError,
   onSuccess,
   onPress,
+  onPressError,
   titleLines = 2,
   descriptionLines = 4,
   containerStyle,
@@ -113,7 +115,13 @@ export const LinkPreview: React.FC<Props> = ({
       style={[styles.container, containerStyle]}
       onPress={() => {
         if (onPress) onPress(data);
-        else Linking.openURL(data.url);
+        else {
+          void Linking.openURL(data.url).catch((reason: unknown) => {
+            const openError =
+              reason instanceof Error ? reason : new Error(String(reason));
+            onPressError?.(openError);
+          });
+        }
       }}
       accessibilityRole="link"
       accessibilityLabel={`${data.title}, ${data.description}`}

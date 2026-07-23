@@ -111,6 +111,7 @@ Notes:
 | `onSuccess`        | `(data: LinkPreviewResponse) => void` | No       | -                   | Callback when data is successfully fetched                         |
 | `onError`          | `(error: string) => void`             | No       | -                   | Callback when fetching metadata fails                              |
 | `onPress`          | `(data: LinkPreviewResponse) => void` | No       | -                   | Callback when pressed; if omitted, the URL is opened via `Linking` |
+| `onPressError`     | `(error: Error) => void`              | No       | -                   | Callback when the default `Linking.openURL` call fails             |
 | `containerStyle`   | `ViewStyle`                           | No       | -                   | Style for the container view                                       |
 | `imageStyle`       | `ImageStyle`                          | No       | -                   | Style for the preview image                                        |
 | `titleStyle`       | `TextStyle`                           | No       | -                   | Style for the title text                                           |

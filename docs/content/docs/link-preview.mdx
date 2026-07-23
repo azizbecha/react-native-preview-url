@@ -41,6 +41,7 @@ target, hooking into lifecycle events, controlling layout, and styling.
 | `onSuccess` | `(data: LinkPreviewResponse) => void` | —       | Fires when metadata is fetched.                                                     |
 | `onError`   | `(error: string) => void`             | —       | Fires on any failure (invalid URL, network, server error, timeout).                 |
 | `onPress`   | `(data: LinkPreviewResponse) => void` | —       | Override the default tap behavior. Without this prop, taps call `Linking.openURL`.  |
+| `onPressError` | `(error: Error) => void` | — | Fires when the default `Linking.openURL` call fails. |
 | `visible`   | `boolean`                             | `true`  | When `false`, the resolved card is unmounted (the loader still shows during fetch). |
 
 ### Layout
