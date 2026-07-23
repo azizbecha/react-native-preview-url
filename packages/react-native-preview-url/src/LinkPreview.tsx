@@ -131,7 +131,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
       onPress={() => {
         if (onPress) onPress(data);
         else {
-          void Promise.resolve()
+          Promise.resolve()
             .then(() => Linking.openURL(data.url))
             .catch((reason: unknown) => {
               const openError =
