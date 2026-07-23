@@ -49,7 +49,9 @@ export const configureCache = (options: CacheOptions): void => {
   const nextMaxSize =
     options.maxSize === undefined ? maxSize : requireMaxSize(options.maxSize);
   const nextTtl =
-    options.ttl === undefined ? ttl : requireFiniteNonNegative(options.ttl, 'ttl');
+    options.ttl === undefined
+      ? ttl
+      : requireFiniteNonNegative(options.ttl, 'ttl');
   const nextErrorTtl =
     options.errorTtl === undefined
       ? errorTtl

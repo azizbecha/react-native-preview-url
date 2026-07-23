@@ -27,10 +27,12 @@ const optionalDimension = (
 
 const parseImages = (value: unknown): PreviewImage[] | undefined => {
   if (value === undefined) return undefined;
-  if (!Array.isArray(value)) return invalidResponse('"images" must be an array');
+  if (!Array.isArray(value))
+    return invalidResponse('"images" must be an array');
 
   return value.map((image, index) => {
-    if (!isRecord(image)) invalidResponse(`"images[${index}]" must be an object`);
+    if (!isRecord(image))
+      invalidResponse(`"images[${index}]" must be an object`);
 
     const url = image.url;
     if (typeof url !== 'string' || !isValidHttpUrl(url)) {

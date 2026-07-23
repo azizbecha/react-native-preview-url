@@ -91,9 +91,9 @@ describe('LinkPreview component', () => {
   it('uses a domain fallback for incomplete accessibility metadata', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn().mockImplementation(() =>
-        okFetch({ url: 'https://example.com/page' })
-      )
+      vi
+        .fn()
+        .mockImplementation(() => okFetch({ url: 'https://example.com/page' }))
     );
 
     render(<LinkPreview url="https://example.com/page" />);
@@ -218,16 +218,15 @@ describe('LinkPreview component', () => {
     linkingMock.mockRejectedValueOnce(navigationError);
 
     render(
-      <LinkPreview
-        url="https://example.com/page"
-        onPressError={onPressError}
-      />
+      <LinkPreview url="https://example.com/page" onPressError={onPressError} />
     );
 
     await waitFor(() => screen.getByTestId('rn-touchable'));
     fireEvent.click(screen.getByTestId('rn-touchable'));
 
-    await waitFor(() => expect(onPressError).toHaveBeenCalledWith(navigationError));
+    await waitFor(() =>
+      expect(onPressError).toHaveBeenCalledWith(navigationError)
+    );
   });
 
   it('falls back to fallbackImage source when the image errors', async () => {
@@ -262,7 +261,9 @@ describe('LinkPreview component', () => {
       'fetch',
       vi
         .fn()
-        .mockImplementation(() => okFetch({ ...richResponse, images: undefined }))
+        .mockImplementation(() =>
+          okFetch({ ...richResponse, images: undefined })
+        )
     );
 
     render(

@@ -176,9 +176,9 @@ describe('useUrlPreview hook', () => {
     });
 
     it('passes custom headers to the supplied fetcher', async () => {
-      const fetcher = vi.fn().mockImplementation(() =>
-        okFetch(mockResponse('https://example.com'))
-      );
+      const fetcher = vi
+        .fn()
+        .mockImplementation(() => okFetch(mockResponse('https://example.com')));
 
       const { result } = renderHook(() =>
         useUrlPreview('https://example.com', {
