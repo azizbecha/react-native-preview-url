@@ -19,7 +19,7 @@ import { useUrlPreview } from './useUrlPreview';
 import { getDomainFromUrl } from './utils/getDomainFromUrl';
 import type { LinkPreviewResponse } from './types';
 
-interface Props {
+export interface LinkPreviewProps {
   url: string;
   timeout?: number;
   onError?: (error: string) => void;
@@ -40,7 +40,7 @@ interface Props {
   fallbackImage?: ImageSourcePropType;
 }
 
-export const LinkPreview: React.FC<Props> = ({
+export const LinkPreview: React.FC<LinkPreviewProps> = ({
   url,
   timeout = DEFAULT_TIMEOUT,
   onError,

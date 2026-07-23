@@ -14,6 +14,11 @@ import {
   clearCache, // wipe all entries
   invalidateUrl, // drop one entry
   type CacheOptions,
+  type LinkPreviewProps,
+  type LinkPreviewResponse,
+  type PreviewImage,
+  type UseUrlPreviewOptions,
+  type UseUrlPreviewResult,
 } from 'react-native-preview-url';
 ```
 
@@ -63,8 +68,7 @@ See [Caching](/docs/caching).
 
 ## Types
 
-The library does not re-export the response types — they're inferred at the
-call site. The shapes are:
+The library re-exports its public response, component, hook, and cache types:
 
 ### `LinkPreviewResponse`
 

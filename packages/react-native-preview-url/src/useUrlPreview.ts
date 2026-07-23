@@ -17,10 +17,25 @@ import { normalizeTimeout } from './normalizeTimeout';
 const TIMEOUT_ERROR_MESSAGE = 'Request timed out';
 const TIMEOUT_BUFFER_MS = 500;
 
+export interface UseUrlPreviewOptions {
+  timeout?: number;
+  enabled?: boolean;
+  headers?: HeadersInit;
+  fetcher?: typeof fetch;
+  signal?: AbortSignal;
+  retry?: number;
+}
+
+export interface UseUrlPreviewResult {
+  loading: boolean;
+  data: LinkPreviewResponse | null;
+  error: string | null;
+}
+
 export const useUrlPreview = (
   url: string,
   timeout: number = DEFAULT_TIMEOUT
-) => {
+): UseUrlPreviewResult => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<LinkPreviewResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
