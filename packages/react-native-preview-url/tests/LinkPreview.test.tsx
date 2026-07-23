@@ -88,6 +88,25 @@ describe('LinkPreview component', () => {
     expect(screen.getByText('example.com')).toBeTruthy();
   });
 
+  it('uses a domain fallback for incomplete accessibility metadata', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() =>
+        okFetch({ url: 'https://example.com/page' })
+      )
+    );
+
+    render(<LinkPreview url="https://example.com/page" />);
+
+    await waitFor(() => screen.getByTestId('rn-touchable'));
+    expect(screen.getByTestId('rn-touchable').getAttribute('aria-label')).toBe(
+      'Link preview for example.com'
+    );
+    expect(
+      screen.getByTestId('rn-touchable').getAttribute('data-accessibility-hint')
+    ).toBe('Opens example.com');
+  });
+
   it('hides the URL line when showUrl is false', async () => {
     vi.stubGlobal(
       'fetch',

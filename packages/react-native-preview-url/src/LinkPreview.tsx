@@ -105,6 +105,19 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
 
   if (error || !data || !visible) return null;
 
+  const domain = getDomainFromUrl(data.url);
+  const accessibilityText = [data.title, data.description]
+    .filter(
+      (value): value is string =>
+        typeof value === 'string' && value.trim().length > 0
+    )
+    .join(', ');
+  const accessibilityLabel =
+    accessibilityText || `Link preview for ${domain || 'link'}`;
+  const imageAccessibilityLabel = data.title
+    ? `Preview image for ${data.title}`
+    : `Preview image${domain ? ` for ${domain}` : ''}`;
+
   const handleImageError = (failedUri: string | undefined) => {
     if (failedUri && failedUri !== activeImageUriRef.current) return;
     setImageError(true);
@@ -124,8 +137,8 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
         }
       }}
       accessibilityRole="link"
-      accessibilityLabel={`${data.title}, ${data.description}`}
-      accessibilityHint={`Opens ${getDomainFromUrl(data.url)}`}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={domain ? `Opens ${domain}` : 'Opens link'}
     >
       {shouldRenderImage && (
         <Image
@@ -139,7 +152,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
           ]}
           resizeMode="cover"
           onError={() => handleImageError(candidateImageUri)}
-          accessibilityLabel={`Preview image for ${data.title}`}
+          accessibilityLabel={imageAccessibilityLabel}
         />
       )}
       <View style={styles.contentContainer}>
