@@ -35,4 +35,16 @@ describe('getDomainFromUrl', () => {
   it('should extract domain from github.com URL', () => {
     expect(getDomainFromUrl('https://github.com/azizbecha')).toBe('github.com');
   });
+
+  it('should ignore credentials when extracting the hostname', () => {
+    expect(getDomainFromUrl('https://user:password@example.com/path')).toBe(
+      'example.com'
+    );
+  });
+
+  it('should support IPv6 hostnames', () => {
+    expect(getDomainFromUrl('https://[2001:db8::1]:8080/path')).toBe(
+      '[2001:db8::1]'
+    );
+  });
 });
