@@ -202,7 +202,9 @@ describe('LinkPreview component', () => {
     await waitFor(() => screen.getByTestId('rn-touchable'));
     fireEvent.click(screen.getByTestId('rn-touchable'));
 
-    expect(linkingMock).toHaveBeenCalledWith('https://example.com/page');
+    await waitFor(() =>
+      expect(linkingMock).toHaveBeenCalledWith('https://example.com/page')
+    );
   });
 
   it('reports a failed default navigation without rejecting', async () => {

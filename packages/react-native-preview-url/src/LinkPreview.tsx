@@ -131,11 +131,13 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
       onPress={() => {
         if (onPress) onPress(data);
         else {
-          void Linking.openURL(data.url).catch((reason: unknown) => {
-            const openError =
-              reason instanceof Error ? reason : new Error(String(reason));
-            onPressError?.(openError);
-          });
+          void Promise.resolve()
+            .then(() => Linking.openURL(data.url))
+            .catch((reason: unknown) => {
+              const openError =
+                reason instanceof Error ? reason : new Error(String(reason));
+              onPressError?.(openError);
+            });
         }
       }}
       accessibilityRole="link"
