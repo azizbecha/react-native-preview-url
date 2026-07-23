@@ -170,7 +170,9 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#E5E5E5',
     width: '100%',
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     gap: 8,
     shadowOffset: {
