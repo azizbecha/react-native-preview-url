@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getBaseUrl, DEFAULT_TIMEOUT } from './constants';
 import type { LinkPreviewResponse } from './types';
 import { isValidHttpUrl } from './utils/isValidHttpUrl';
@@ -10,6 +10,7 @@ import {
   getInFlight,
   setInFlight,
   clearInFlight,
+  invalidateUrl,
 } from './cache';
 import { validateLinkPreviewResponse } from './validateLinkPreviewResponse';
 import { normalizeTimeout } from './normalizeTimeout';
@@ -30,6 +31,7 @@ export interface UseUrlPreviewResult {
   loading: boolean;
   data: LinkPreviewResponse | null;
   error: string | null;
+  refresh: () => void;
 }
 
 type UseUrlPreviewArgument = number | UseUrlPreviewOptions;
@@ -70,6 +72,7 @@ export const useUrlPreview = (
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<LinkPreviewResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [refreshVersion, setRefreshVersion] = useState(0);
   const options = getOptions(argument);
   const timeout = options.timeout ?? DEFAULT_TIMEOUT;
   const requestEnabled = options.enabled ?? true;
@@ -78,6 +81,10 @@ export const useUrlPreview = (
   }
   const retryCount = getRetryCount(options.retry);
   const requestFetcher = options.fetcher ?? fetch;
+  const refresh = useCallback(() => {
+    invalidateUrl(url, getBaseUrl());
+    setRefreshVersion((version) => version + 1);
+  }, [url]);
 
   useEffect(() => {
     const baseUrl = getBaseUrl();
@@ -240,7 +247,8 @@ export const useUrlPreview = (
     options.fetcher,
     options.headers,
     options.signal,
+    refreshVersion,
   ]);
 
-  return { loading, data, error };
+  return { loading, data, error, refresh };
 };

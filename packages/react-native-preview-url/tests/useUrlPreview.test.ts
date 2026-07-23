@@ -123,6 +123,20 @@ describe('useUrlPreview hook', () => {
 
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
+
+    it('refreshes data for an existing hook', async () => {
+      const fetchMock = vi
+        .fn()
+        .mockImplementation(() => okFetch(mockResponse('https://example.com')));
+      vi.stubGlobal('fetch', fetchMock);
+
+      const { result } = renderHook(() => useUrlPreview('https://example.com'));
+      await waitFor(() => expect(result.current.data).not.toBeNull());
+
+      act(() => result.current.refresh());
+
+      await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    });
   });
 
   describe('validation', () => {
