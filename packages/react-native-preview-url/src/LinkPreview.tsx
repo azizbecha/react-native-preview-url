@@ -18,6 +18,7 @@ import { DEFAULT_TIMEOUT } from './constants';
 import { useUrlPreview } from './useUrlPreview';
 import { getDomainFromUrl } from './utils/getDomainFromUrl';
 import type { LinkPreviewResponse } from './types';
+import { selectPreviewImage } from './selectPreviewImage';
 
 export interface LinkPreviewProps {
   url: string;
@@ -77,7 +78,8 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
     onErrorRef.current = onError;
   });
 
-  const candidateImageUri = data?.images?.[0]?.url;
+  const previewImage = selectPreviewImage(data?.images);
+  const candidateImageUri = previewImage?.url;
   const imageUri = !imageError ? candidateImageUri : undefined;
   const imageSource = imageUri ? { uri: imageUri } : fallbackImage;
   const shouldRenderImage = !hideImage && imageSource !== undefined;
@@ -145,8 +147,8 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
           source={imageSource}
           style={[
             styles.image,
-            data.images[0]?.width && data.images[0]?.height
-              ? { aspectRatio: data.images[0].width / data.images[0].height }
+            previewImage?.width && previewImage.height
+              ? { aspectRatio: previewImage.width / previewImage.height }
               : undefined,
             imageStyle,
           ]}

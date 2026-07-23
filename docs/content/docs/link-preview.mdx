@@ -164,7 +164,8 @@ URL state and retype without waiting out an error TTL.
 
 ### Image failures
 
-If the page's first image URL fails to decode, the component falls back to
+The component prefers the largest valid HTTPS image returned by the page. If
+that image fails to decode, it falls back to
 `fallbackImage` (if provided). If you want to retry the original, change the
 URL — the image error state resets every time `url` changes.
 
