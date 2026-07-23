@@ -9,7 +9,7 @@ import {
 import { Linking } from 'react-native';
 import { LinkPreview } from '../src/LinkPreview';
 import { setBaseUrl } from '../src/constants';
-import { configureCache, clearCache } from '../src/cache';
+import { configureCache, clearCache, invalidateUrl } from '../src/cache';
 import type { LinkPreviewResponse } from '../src/types';
 
 const okFetch = (body: unknown) =>
@@ -304,6 +304,53 @@ describe('LinkPreview component', () => {
     await waitFor(() => {
       const img = screen.getByTestId('rn-image') as HTMLImageElement;
       expect(img.getAttribute('src')).toBe('https://b.example.com/img.png');
+    });
+  });
+
+  it('resets imageError state when a refreshed response selects a new image', async () => {
+    const responseA: LinkPreviewResponse = {
+      ...richResponse,
+      images: [{ url: 'https://example.com/first.png' }],
+    };
+    const responseB: LinkPreviewResponse = {
+      ...richResponse,
+      images: [{ url: 'https://example.com/second.png' }],
+    };
+    const fetchMock = vi
+      .fn()
+      .mockImplementationOnce(() => okFetch(responseA))
+      .mockImplementationOnce(() => okFetch(responseB));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { rerender } = render(
+      <LinkPreview
+        url="https://example.com/page"
+        fallbackImage={{ uri: 'https://fallback.example.com/img.png' }}
+      />
+    );
+
+    await waitFor(() => screen.getByTestId('rn-image'));
+    fireEvent.error(screen.getByTestId('rn-image'));
+
+    await waitFor(() => {
+      expect((screen.getByTestId('rn-image') as HTMLImageElement).src).toBe(
+        'https://fallback.example.com/img.png'
+      );
+    });
+
+    invalidateUrl('https://example.com/page');
+    rerender(
+      <LinkPreview
+        url="https://example.com/page"
+        timeout={4000}
+        fallbackImage={{ uri: 'https://fallback.example.com/img.png' }}
+      />
+    );
+
+    await waitFor(() => {
+      expect((screen.getByTestId('rn-image') as HTMLImageElement).src).toBe(
+        'https://example.com/second.png'
+      );
     });
   });
 

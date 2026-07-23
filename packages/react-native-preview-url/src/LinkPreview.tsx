@@ -85,7 +85,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
 
   useEffect(() => {
     setImageError(false);
-  }, [url]);
+  }, [candidateImageUri]);
 
   useEffect(() => {
     if (data) {
