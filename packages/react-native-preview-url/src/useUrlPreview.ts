@@ -17,6 +17,7 @@ import {
   setInFlight,
   clearInFlight,
 } from './cache';
+import { validateLinkPreviewResponse } from './validateLinkPreviewResponse';
 
 const TIMEOUT_ERROR_MESSAGE = 'Request timed out';
 const TIMEOUT_BUFFER_MS = 500;
@@ -94,7 +95,7 @@ export const useUrlPreview = (
             throw new Error(errMsg);
           }
 
-          return (await res.json()) as LinkPreviewResponse;
+          return validateLinkPreviewResponse(await res.json());
         } catch (err: unknown) {
           if (timedOut) {
             throw new Error(TIMEOUT_ERROR_MESSAGE);
