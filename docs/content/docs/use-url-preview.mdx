@@ -13,7 +13,7 @@ rows), or want to react to the data outside of rendering.
 ```ts
 function useUrlPreview(
   url: string,
-  timeout?: number // default 3000ms, clamped to [1000, 30000]
+  timeoutOrOptions?: number | UseUrlPreviewOptions
 ): {
   loading: boolean;
   data: LinkPreviewResponse | null;
@@ -21,7 +21,24 @@ function useUrlPreview(
 };
 ```
 
-The hook re-runs whenever `url` or `timeout` changes. Concurrent renders for
+Pass a number for the original timeout API, or an options object:
+
+```ts
+useUrlPreview(url, {
+  timeout: 3000,
+  enabled: true,
+  headers: { Authorization: 'Bearer token' },
+  fetcher: customFetch,
+  signal: abortController.signal,
+  retry: 1,
+});
+```
+
+Custom `fetcher`, `headers`, and `signal` values intentionally bypass the
+shared cache and in-flight deduplication, so request-specific credentials and
+cancellation cannot leak between consumers.
+
+The hook re-runs whenever `url` or its request options change. Concurrent renders for
 the same URL share a single in-flight request — only one network call goes
 out, even across many components.
 

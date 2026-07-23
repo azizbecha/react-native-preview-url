@@ -32,16 +32,62 @@ export interface UseUrlPreviewResult {
   error: string | null;
 }
 
+type UseUrlPreviewArgument = number | UseUrlPreviewOptions;
+
+const getOptions = (argument: UseUrlPreviewArgument): UseUrlPreviewOptions => {
+  if (typeof argument === 'number') return { timeout: argument };
+  if (!argument || typeof argument !== 'object' || Array.isArray(argument)) {
+    throw new TypeError('useUrlPreview expects a timeout number or options object');
+  }
+  return argument;
+};
+
+const getRetryCount = (retry: number | undefined): number => {
+  if (retry === undefined) return 0;
+  if (!Number.isSafeInteger(retry) || retry < 0) {
+    throw new RangeError('retry must be a non-negative safe integer');
+  }
+  return retry;
+};
+
+const getRequestHeaders = (
+  requestHeaders: HeadersInit | undefined
+): Record<string, string> => {
+  const headers = new Headers(requestHeaders);
+  if (!headers.has('Accept')) headers.set('Accept', 'application/json');
+
+  const result: Record<string, string> = {};
+  headers.forEach((value, name) => {
+    result[name] = value;
+  });
+  return result;
+};
+
 export const useUrlPreview = (
   url: string,
-  timeout: number = DEFAULT_TIMEOUT
+  argument: UseUrlPreviewArgument = DEFAULT_TIMEOUT
 ): UseUrlPreviewResult => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<LinkPreviewResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const options = getOptions(argument);
+  const timeout = options.timeout ?? DEFAULT_TIMEOUT;
+  const requestEnabled = options.enabled ?? true;
+  if (typeof requestEnabled !== 'boolean') {
+    throw new TypeError('enabled must be a boolean');
+  }
+  const retryCount = getRetryCount(options.retry);
+  const requestFetcher = options.fetcher ?? fetch;
 
   useEffect(() => {
     const baseUrl = getBaseUrl();
+
+    if (!requestEnabled) {
+      setError(null);
+      setData(null);
+      setLoading(false);
+      return;
+    }
 
     if (!url) {
       setError('URL is required');
@@ -57,31 +103,43 @@ export const useUrlPreview = (
       return;
     }
 
-    const cached = getCached(url, baseUrl);
-    if (cached) {
-      setError(null);
-      setData(cached);
-      setLoading(false);
-      return;
-    }
+    const canShareRequest =
+      options.fetcher === undefined &&
+      options.headers === undefined &&
+      options.signal === undefined;
 
-    const cachedError = getCachedError(url, baseUrl);
-    if (cachedError) {
-      setError(cachedError);
-      setData(null);
-      setLoading(false);
-      return;
+    if (canShareRequest) {
+      const cached = getCached(url, baseUrl);
+      if (cached) {
+        setError(null);
+        setData(cached);
+        setLoading(false);
+        return;
+      }
+
+      const cachedError = getCachedError(url, baseUrl);
+      if (cachedError) {
+        setError(cachedError);
+        setData(null);
+        setLoading(false);
+        return;
+      }
     }
 
     let cancelled = false;
     const finalTimeout = normalizeTimeout(timeout);
 
     const ensureInFlight = (): Promise<LinkPreviewResponse> => {
-      const existing = getInFlight(url, baseUrl);
-      if (existing) return existing;
+      if (canShareRequest) {
+        const existing = getInFlight(url, baseUrl);
+        if (existing) return existing;
+      }
 
       const controller = new AbortController();
       let timedOut = false;
+      const abortFromCaller = () => controller.abort();
+      options.signal?.addEventListener('abort', abortFromCaller, { once: true });
+      if (options.signal?.aborted) controller.abort();
       const timer = setTimeout(() => {
         timedOut = true;
         controller.abort();
@@ -89,23 +147,33 @@ export const useUrlPreview = (
 
       const fetchPromise = (async () => {
         try {
-          const res = await fetch(
-            `${baseUrl}/get?url=${encodeURIComponent(url)}&timeout=${finalTimeout}`,
-            { signal: controller.signal }
-          );
-
-          if (!res.ok) {
-            let errMsg = `Error ${res.status}`;
+          for (let attempt = 0; attempt <= retryCount; attempt += 1) {
             try {
-              const errJson = (await res.json()) as { error?: string };
-              if (errJson?.error) errMsg = errJson.error;
-            } catch (_) {
-              // body wasn't JSON; keep status-based message
-            }
-            throw new Error(errMsg);
-          }
+              const res = await requestFetcher(
+                `${baseUrl}/get?url=${encodeURIComponent(url)}&timeout=${finalTimeout}`,
+                {
+                  headers: getRequestHeaders(options.headers),
+                  signal: controller.signal,
+                }
+              );
 
-          return validateLinkPreviewResponse(await res.json());
+              if (!res.ok) {
+                let errMsg = `Error ${res.status}`;
+                try {
+                  const errJson = (await res.json()) as { error?: string };
+                  if (errJson?.error) errMsg = errJson.error;
+                } catch (_) {
+                  // body wasn't JSON; keep status-based message
+                }
+                throw new Error(errMsg);
+              }
+
+              return validateLinkPreviewResponse(await res.json());
+            } catch (err: unknown) {
+              if (timedOut || attempt === retryCount) throw err;
+            }
+          }
+          throw new Error('Request failed');
         } catch (err: unknown) {
           if (timedOut) {
             throw new Error(TIMEOUT_ERROR_MESSAGE);
@@ -113,21 +181,26 @@ export const useUrlPreview = (
           throw err;
         } finally {
           clearTimeout(timer);
+          options.signal?.removeEventListener('abort', abortFromCaller);
         }
       })();
 
-      setInFlight(url, fetchPromise, baseUrl);
+      if (canShareRequest) setInFlight(url, fetchPromise, baseUrl);
       fetchPromise
         .then((value) => {
-          setCached(url, value, baseUrl);
+          if (canShareRequest) setCached(url, value, baseUrl);
         })
         .catch((err: unknown) => {
-          if (err instanceof Error && err.message !== TIMEOUT_ERROR_MESSAGE) {
+          if (
+            canShareRequest &&
+            err instanceof Error &&
+            err.message !== TIMEOUT_ERROR_MESSAGE
+          ) {
             setCachedError(url, err.message, baseUrl);
           }
         })
         .finally(() => {
-          clearInFlight(url, baseUrl);
+          if (canShareRequest) clearInFlight(url, baseUrl);
         });
 
       return fetchPromise;
@@ -158,7 +231,16 @@ export const useUrlPreview = (
     return () => {
       cancelled = true;
     };
-  }, [url, timeout]);
+  }, [
+    url,
+    timeout,
+    requestEnabled,
+    retryCount,
+    requestFetcher,
+    options.fetcher,
+    options.headers,
+    options.signal,
+  ]);
 
   return { loading, data, error };
 };

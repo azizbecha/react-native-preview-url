@@ -147,6 +147,59 @@ describe('useUrlPreview hook', () => {
     });
   });
 
+  describe('options object', () => {
+    it('supports disabling a request', async () => {
+      const fetchMock = vi.fn();
+      vi.stubGlobal('fetch', fetchMock);
+
+      const { result } = renderHook(() =>
+        useUrlPreview('https://example.com', { enabled: false })
+      );
+
+      await waitFor(() => expect(result.current.loading).toBe(false));
+      expect(result.current.data).toBeNull();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('passes custom headers to the supplied fetcher', async () => {
+      const fetcher = vi.fn().mockImplementation(() =>
+        okFetch(mockResponse('https://example.com'))
+      );
+
+      const { result } = renderHook(() =>
+        useUrlPreview('https://example.com', {
+          fetcher,
+          headers: { Authorization: 'Bearer token' },
+        })
+      );
+
+      await waitFor(() => expect(result.current.data).not.toBeNull());
+      expect(fetcher).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            accept: 'application/json',
+            authorization: 'Bearer token',
+          },
+        })
+      );
+    });
+
+    it('retries failed requests the requested number of times', async () => {
+      const fetcher = vi
+        .fn()
+        .mockImplementationOnce(() => Promise.reject(new Error('offline')))
+        .mockImplementation(() => okFetch(mockResponse('https://example.com')));
+
+      const { result } = renderHook(() =>
+        useUrlPreview('https://example.com', { fetcher, retry: 1 })
+      );
+
+      await waitFor(() => expect(result.current.data).not.toBeNull());
+      expect(fetcher).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe('timeout', () => {
     it('surfaces a timeout error when the fetch never settles', async () => {
       vi.useFakeTimers();
