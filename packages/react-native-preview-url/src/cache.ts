@@ -24,7 +24,8 @@ let enabled = true;
 let entries = new Map<string, CacheEntry>();
 let inFlight = new Map<string, Promise<LinkPreviewResponse>>();
 
-const makeKey = (url: string): string => `${getBaseUrl()}::${url}`;
+const makeKey = (url: string, baseUrl = getBaseUrl()): string =>
+  `${baseUrl}::${url}`;
 
 export const configureCache = (options: CacheOptions): void => {
   if (options.maxSize !== undefined) maxSize = options.maxSize;
@@ -39,8 +40,8 @@ export const clearCache = (): void => {
   entries.clear();
 };
 
-export const invalidateUrl = (url: string): void => {
-  entries.delete(makeKey(url));
+export const invalidateUrl = (url: string, baseUrl?: string): void => {
+  entries.delete(makeKey(url, baseUrl));
 };
 
 const evictExcess = (): void => {
@@ -64,45 +65,61 @@ const readEntry = (key: string): CacheEntry | undefined => {
   return entry;
 };
 
-export const getCached = (url: string): LinkPreviewResponse | undefined => {
-  const entry = readEntry(makeKey(url));
+export const getCached = (
+  url: string,
+  baseUrl?: string
+): LinkPreviewResponse | undefined => {
+  const entry = readEntry(makeKey(url, baseUrl));
   return entry && entry.ok ? entry.data : undefined;
 };
 
-export const getCachedError = (url: string): string | undefined => {
-  const entry = readEntry(makeKey(url));
+export const getCachedError = (
+  url: string,
+  baseUrl?: string
+): string | undefined => {
+  const entry = readEntry(makeKey(url, baseUrl));
   return entry && !entry.ok ? entry.error : undefined;
 };
 
-export const setCached = (url: string, data: LinkPreviewResponse): void => {
+export const setCached = (
+  url: string,
+  data: LinkPreviewResponse,
+  baseUrl?: string
+): void => {
   if (!enabled) return;
-  const key = makeKey(url);
+  const key = makeKey(url, baseUrl);
   if (entries.has(key)) entries.delete(key);
   entries.set(key, { ok: true, data, expiresAt: Date.now() + ttl });
   evictExcess();
 };
 
-export const setCachedError = (url: string, error: string): void => {
+export const setCachedError = (
+  url: string,
+  error: string,
+  baseUrl?: string
+): void => {
   if (!enabled) return;
-  const key = makeKey(url);
+  const key = makeKey(url, baseUrl);
   if (entries.has(key)) entries.delete(key);
   entries.set(key, { ok: false, error, expiresAt: Date.now() + errorTtl });
   evictExcess();
 };
 
 export const getInFlight = (
-  url: string
+  url: string,
+  baseUrl?: string
 ): Promise<LinkPreviewResponse> | undefined => {
-  return inFlight.get(makeKey(url));
+  return inFlight.get(makeKey(url, baseUrl));
 };
 
 export const setInFlight = (
   url: string,
-  promise: Promise<LinkPreviewResponse>
+  promise: Promise<LinkPreviewResponse>,
+  baseUrl?: string
 ): void => {
-  inFlight.set(makeKey(url), promise);
+  inFlight.set(makeKey(url, baseUrl), promise);
 };
 
-export const clearInFlight = (url: string): void => {
-  inFlight.delete(makeKey(url));
+export const clearInFlight = (url: string, baseUrl?: string): void => {
+  inFlight.delete(makeKey(url, baseUrl));
 };

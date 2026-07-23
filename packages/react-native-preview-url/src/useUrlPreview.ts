@@ -30,6 +30,8 @@ export const useUrlPreview = (
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const baseUrl = getBaseUrl();
+
     if (!url) {
       setError('URL is required');
       setData(null);
@@ -44,7 +46,7 @@ export const useUrlPreview = (
       return;
     }
 
-    const cached = getCached(url);
+    const cached = getCached(url, baseUrl);
     if (cached) {
       setError(null);
       setData(cached);
@@ -52,7 +54,7 @@ export const useUrlPreview = (
       return;
     }
 
-    const cachedError = getCachedError(url);
+    const cachedError = getCachedError(url, baseUrl);
     if (cachedError) {
       setError(cachedError);
       setData(null);
@@ -64,7 +66,7 @@ export const useUrlPreview = (
     const finalTimeout = clamp(timeout, MIN_TIMEOUT, MAX_TIMEOUT);
 
     const ensureInFlight = (): Promise<LinkPreviewResponse> => {
-      const existing = getInFlight(url);
+      const existing = getInFlight(url, baseUrl);
       if (existing) return existing;
 
       const controller = new AbortController();
@@ -77,7 +79,7 @@ export const useUrlPreview = (
       const fetchPromise = (async () => {
         try {
           const res = await fetch(
-            `${getBaseUrl()}/get?url=${encodeURIComponent(url)}&timeout=${finalTimeout}`,
+            `${baseUrl}/get?url=${encodeURIComponent(url)}&timeout=${finalTimeout}`,
             { signal: controller.signal }
           );
 
@@ -103,18 +105,18 @@ export const useUrlPreview = (
         }
       })();
 
-      setInFlight(url, fetchPromise);
+      setInFlight(url, fetchPromise, baseUrl);
       fetchPromise
         .then((value) => {
-          setCached(url, value);
+          setCached(url, value, baseUrl);
         })
         .catch((err: unknown) => {
           if (err instanceof Error && err.message !== TIMEOUT_ERROR_MESSAGE) {
-            setCachedError(url, err.message);
+            setCachedError(url, err.message, baseUrl);
           }
         })
         .finally(() => {
-          clearInFlight(url);
+          clearInFlight(url, baseUrl);
         });
 
       return fetchPromise;

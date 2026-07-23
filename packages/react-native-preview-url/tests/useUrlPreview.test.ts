@@ -281,6 +281,38 @@ describe('useUrlPreview hook', () => {
     });
   });
 
+  describe('base URL changes', () => {
+    it('keeps a request attached to the base URL it started with', async () => {
+      let resolveFetch: (value: Response) => void = () => {};
+      const fetchMock = vi.fn().mockImplementation(
+        () =>
+          new Promise<Response>((resolve) => {
+            resolveFetch = resolve;
+          })
+      );
+      vi.stubGlobal('fetch', fetchMock);
+
+      const first = renderHook(() => useUrlPreview('https://example.com'));
+      expect(fetchMock).toHaveBeenCalledWith(
+        'https://azizbecha-link-preview-api.vercel.app/get?url=https%3A%2F%2Fexample.com&timeout=3000',
+        expect.any(Object)
+      );
+
+      setBaseUrl('https://other-api.example.com');
+      resolveFetch({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(mockResponse('https://example.com')),
+      } as unknown as Response);
+
+      await waitFor(() => expect(first.result.current.data).not.toBeNull());
+
+      const second = renderHook(() => useUrlPreview('https://example.com'));
+      await waitFor(() => expect(second.result.current.loading).toBe(true));
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe('error caching', () => {
     it('caches non-timeout errors and reuses them on the next mount', async () => {
       const fetchMock = vi
