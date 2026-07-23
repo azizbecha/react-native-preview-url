@@ -10,10 +10,8 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const optionalString = (value: unknown, field: string): string | undefined => {
   if (value === undefined) return undefined;
-  if (typeof value !== 'string') {
-    invalidResponse(`"${field}" must be a string`);
-  }
-  return value;
+  if (typeof value === 'string') return value;
+  return invalidResponse(`"${field}" must be a string`);
 };
 
 const optionalDimension = (
@@ -21,15 +19,15 @@ const optionalDimension = (
   field: string
 ): number | undefined => {
   if (value === undefined) return undefined;
-  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
-    invalidResponse(`"${field}" must be a positive finite number`);
+  if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+    return value;
   }
-  return value;
+  return invalidResponse(`"${field}" must be a positive finite number`);
 };
 
 const parseImages = (value: unknown): PreviewImage[] | undefined => {
   if (value === undefined) return undefined;
-  if (!Array.isArray(value)) invalidResponse('"images" must be an array');
+  if (!Array.isArray(value)) return invalidResponse('"images" must be an array');
 
   return value.map((image, index) => {
     if (!isRecord(image)) invalidResponse(`"images[${index}]" must be an object`);
@@ -47,21 +45,25 @@ const parseImages = (value: unknown): PreviewImage[] | undefined => {
 
 const parseFavicons = (value: unknown): string[] | undefined => {
   if (value === undefined) return undefined;
-  if (!Array.isArray(value) || value.some((favicon) => typeof favicon !== 'string')) {
-    invalidResponse('"favicons" must be an array of strings');
+  if (
+    Array.isArray(value) &&
+    value.every((favicon): favicon is string => typeof favicon === 'string')
+  ) {
+    return value;
   }
-  return value as string[];
+  return invalidResponse('"favicons" must be an array of strings');
 };
 
 export const validateLinkPreviewResponse = (
   value: unknown
 ): LinkPreviewResponse => {
-  if (!isRecord(value)) invalidResponse('body must be an object');
+  if (!isRecord(value)) return invalidResponse('body must be an object');
 
-  const url = value.url;
-  if (typeof url !== 'string' || !isValidHttpUrl(url)) {
-    invalidResponse('"url" must be a valid http(s) URL');
+  const rawUrl = value.url;
+  if (typeof rawUrl !== 'string' || !isValidHttpUrl(rawUrl)) {
+    return invalidResponse('"url" must be a valid http(s) URL');
   }
+  const url = rawUrl;
 
   return {
     url,
