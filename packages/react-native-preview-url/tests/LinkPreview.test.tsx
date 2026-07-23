@@ -213,6 +213,27 @@ describe('LinkPreview component', () => {
     });
   });
 
+  it('renders fallbackImage when the response has no images', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockImplementation(() => okFetch({ ...richResponse, images: undefined }))
+    );
+
+    render(
+      <LinkPreview
+        url="https://example.com/page"
+        fallbackImage={{ uri: 'https://fallback.example.com/img.png' }}
+      />
+    );
+
+    await waitFor(() => screen.getByTestId('rn-image'));
+    expect(
+      (screen.getByTestId('rn-image') as HTMLImageElement).getAttribute('src')
+    ).toBe('https://fallback.example.com/img.png');
+  });
+
   it('resets imageError state when the URL prop changes', async () => {
     const responseA: LinkPreviewResponse = {
       ...richResponse,

@@ -77,6 +77,8 @@ export const LinkPreview: React.FC<Props> = ({
 
   const candidateImageUri = data?.images?.[0]?.url;
   const imageUri = !imageError ? candidateImageUri : undefined;
+  const imageSource = imageUri ? { uri: imageUri } : fallbackImage;
+  const shouldRenderImage = !hideImage && imageSource !== undefined;
   activeImageUriRef.current = candidateImageUri;
 
   useEffect(() => {
@@ -117,9 +119,9 @@ export const LinkPreview: React.FC<Props> = ({
       accessibilityLabel={`${data.title}, ${data.description}`}
       accessibilityHint={`Opens ${getDomainFromUrl(data.url)}`}
     >
-      {data.images && !hideImage && (
+      {shouldRenderImage && (
         <Image
-          source={imageUri ? { uri: imageUri } : fallbackImage}
+          source={imageSource}
           style={[
             styles.image,
             data.images[0]?.width && data.images[0]?.height
