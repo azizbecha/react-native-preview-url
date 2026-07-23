@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getBaseUrl, DEFAULT_TIMEOUT } from './constants';
 import type { LinkPreviewResponse } from './types';
 import { isValidHttpUrl } from './utils/isValidHttpUrl';
@@ -39,7 +39,9 @@ type UseUrlPreviewArgument = number | UseUrlPreviewOptions;
 const getOptions = (argument: UseUrlPreviewArgument): UseUrlPreviewOptions => {
   if (typeof argument === 'number') return { timeout: argument };
   if (!argument || typeof argument !== 'object' || Array.isArray(argument)) {
-    throw new TypeError('useUrlPreview expects a timeout number or options object');
+    throw new TypeError(
+      'useUrlPreview expects a timeout number or options object'
+    );
   }
   return argument;
 };
@@ -72,6 +74,9 @@ const getHeadersKey = (headers: HeadersInit | undefined): string =>
     )
   );
 
+const getRequestHeadersFromKey = (key: string): Record<string, string> =>
+  Object.fromEntries(JSON.parse(key) as Array<[string, string]>);
+
 export const useUrlPreview = (
   url: string,
   argument: UseUrlPreviewArgument = DEFAULT_TIMEOUT
@@ -88,7 +93,16 @@ export const useUrlPreview = (
   }
   const retryCount = getRetryCount(options.retry);
   const requestFetcher = options.fetcher ?? fetch;
+  const hasCustomFetcher = options.fetcher !== undefined;
+  const hasCustomHeaders = options.headers !== undefined;
+  const requestSignal = options.signal;
   const headersKey = getHeadersKey(options.headers);
+  const requestHeaders = useMemo(
+    () => getRequestHeadersFromKey(headersKey),
+    [headersKey]
+  );
+  const canShareRequest =
+    !hasCustomFetcher && !hasCustomHeaders && requestSignal === undefined;
   const refresh = useCallback(() => {
     invalidateUrl(url, getBaseUrl());
     setRefreshVersion((version) => version + 1);
@@ -117,11 +131,6 @@ export const useUrlPreview = (
       setLoading(false);
       return;
     }
-
-    const canShareRequest =
-      options.fetcher === undefined &&
-      options.headers === undefined &&
-      options.signal === undefined;
 
     if (canShareRequest) {
       const cached = getCached(url, baseUrl);
@@ -153,8 +162,8 @@ export const useUrlPreview = (
       const controller = new AbortController();
       let timedOut = false;
       const abortFromCaller = () => controller.abort();
-      options.signal?.addEventListener('abort', abortFromCaller, { once: true });
-      if (options.signal?.aborted) controller.abort();
+      requestSignal?.addEventListener('abort', abortFromCaller, { once: true });
+      if (requestSignal?.aborted) controller.abort();
       const timer = setTimeout(() => {
         timedOut = true;
         controller.abort();
@@ -167,7 +176,7 @@ export const useUrlPreview = (
               const res = await requestFetcher(
                 `${baseUrl}/get?url=${encodeURIComponent(url)}&timeout=${finalTimeout}`,
                 {
-                  headers: getRequestHeaders(options.headers),
+                  headers: requestHeaders,
                   signal: controller.signal,
                 }
               );
@@ -196,7 +205,7 @@ export const useUrlPreview = (
           throw err;
         } finally {
           clearTimeout(timer);
-          options.signal?.removeEventListener('abort', abortFromCaller);
+          requestSignal?.removeEventListener('abort', abortFromCaller);
         }
       })();
 
@@ -252,8 +261,9 @@ export const useUrlPreview = (
     requestEnabled,
     retryCount,
     requestFetcher,
-    headersKey,
-    options.signal,
+    requestHeaders,
+    requestSignal,
+    canShareRequest,
     refreshVersion,
   ]);
 
