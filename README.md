@@ -1,5 +1,3 @@
-
-
 # react-native-preview-url
 
 <p align="center">
