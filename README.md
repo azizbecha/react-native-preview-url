@@ -31,7 +31,7 @@ For full installation, usage, props, hooks, caching and self-hosting, see the [p
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for development setup and the script reference.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for development setup and the script reference. This project uses **pnpm** as its package manager.
 
 ## License
 
